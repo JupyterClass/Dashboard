@@ -1,0 +1,26 @@
+{
+  "name": "JupyterClass",
+  "version": "1.0.0",
+  "description": "",
+  "author": "elihuansen",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/dotenv": "^1.4.0",
+    "ant-design-vue": "^1.6.1",
+    "formidable": "^1.2.2",
+    "fs": "0.0.1-security",
+    "nuxt": "^2.0.0",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0"
+  },
+  "devDependencies": {
+    "babel-plugin-import": "^1.13.0"
+  }
+}

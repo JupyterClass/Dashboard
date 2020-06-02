@@ -4,7 +4,15 @@
       <sider/>
     </div>
     <div class="content">
-      <h1>LOL</h1>
+      <div class="content-primary">
+        <statistics/>
+        <div class="classroom-layout-wrapper">
+          <classroom-layout/>
+        </div>
+      </div>
+      <div class="content-secondary">
+        <students/>
+      </div>
     </div>
   </div>
 </template>
@@ -18,9 +26,17 @@ import {
 } from 'ant-design-vue';
 import Sider from "../components/Sider";
 import Questions from "../components/Questions";
+import StatCard from "../components/StatCard";
+import Statistics from "../components/Statistics";
+import ClassroomLayout from "../components/ClassroomLayout";
+import Students from "../components/Students";
 
 export default {
   components: {
+    Students,
+    ClassroomLayout,
+    Statistics,
+    StatCard,
     ALayout,
     ALayoutSider: ALayout.Sider,
     ALayoutContent: ALayout.Content,
@@ -58,7 +74,7 @@ export default {
   display: flex;
   height: 100vh;
   width: 100vw;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 .sider {
@@ -66,6 +82,25 @@ export default {
 }
 
 .content {
-
+  flex: 1;
+  display: flex;
+  padding: 16px 16px 16px 8px;
 }
+
+.content-primary {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-secondary {
+  flex: 1;
+  margin-left: 16px;
+}
+
+.classroom-layout-wrapper {
+  flex: 1;
+  padding-top: 16px;
+}
+
 </style>

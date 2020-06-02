@@ -2,19 +2,21 @@
   <a-upload-dragger
     name="file"
     :multiple="true"
+    :showUploadList="false"
     action="/api/upload"
     @change="handleChange"
   >
-    <p class="ant-upload-drag-icon">
-      <a-icon type="inbox" />
-    </p>
-    <p class="ant-upload-text">
-      Click or drag file to this area to upload
-    </p>
-    <p class="ant-upload-hint">
-      Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-      band files
-    </p>
+    <div class="upload-inner-content">
+      <p class="ant-upload-drag-icon">
+        <a-icon type="inbox" />
+      </p>
+      <p class="ant-upload-text">
+        Click or drag file to this area to upload
+      </p>
+      <p class="ant-upload-hint">
+        Every notebook should have the appropriate metadata set!
+      </p>
+    </div>
   </a-upload-dragger>
 </template>
 
@@ -35,9 +37,9 @@ export default {
   methods: {
     handleChange(info) {
       const status = info.file.status;
-      if (status !== 'uploading') {
-        console.log(info.file, info.fileList);
-      }
+      // if (status !== 'uploading') {
+      //   console.log(info.file, info.fileList);
+      // }
       if (status === 'done') {
         message.success(`${info.file.name} file uploaded successfully.`);
       } else if (status === 'error') {
@@ -49,5 +51,7 @@ export default {
 </script>
 
 <style scoped>
-
+  .upload-inner-content {
+    padding: 10px;
+  }
 </style>

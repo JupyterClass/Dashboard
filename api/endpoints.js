@@ -1,14 +1,22 @@
 import evaluate from "./evaluate";
 import { getJson } from "./utils/json";
 import { getFileUploadContents } from "./utils/fileUploads";
-import { getAllQuestions, saveNotebook, saveNotebookQuestions } from "./store/question";
+import {
+  NotebookStore,
+  QuestionStore,
+  getAllQuestions,
+  saveNotebook,
+  saveNotebookQuestions
+} from "./store/question";
 import { invalidEndpoint, invalidPayloadError } from "./errors";
 
 export default {
 
-  /**
-   *
-   */
+  '/sync-stores': async (req, res) => {
+    // For the client to synchronise its store with the server's
+    res.end(JSON.stringify({ NotebookStore, QuestionStore }));
+  },
+
   '/upload': async (req, res) => {
     if (req.method.toLowerCase() !== 'post') {
       res.end(invalidEndpoint());

@@ -1,12 +1,11 @@
 <template>
   <div class="question-card">
-    <h3>Question {{ question.id }}</h3>
-    <status v-if="isLive"
-            text="LIVE"
-            color="#66cb7c" />
-    <status v-else
-            text="DEAD"
-            color="salmon" />
+    <div class="question-card-title">
+      <h3>Question {{ question.id }}</h3>
+      <status v-if="isLive"
+              text="LIVE"
+              color="#66cb7c" />
+    </div>
     <icon-button v-if="isLive"
                  type="stop"
                  color="salmon"
@@ -60,5 +59,11 @@ export default {
   border-radius: 4px;
   padding: 10px;
   margin: 10px;
+}
+
+.question-card-title {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 </style>

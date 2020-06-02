@@ -3,6 +3,7 @@
     name="file"
     :multiple="true"
     :showUploadList="false"
+    :beforeUpload="beforeUpload"
     action="/api/upload"
     @change="handleChange"
   >
@@ -11,10 +12,7 @@
         <a-icon type="inbox" />
       </p>
       <p class="ant-upload-text">
-        Click or drag file to this area to upload
-      </p>
-      <p class="ant-upload-hint">
-        Every notebook should have the appropriate metadata set!
+        Upload JupyterClass Notebook
       </p>
     </div>
   </a-upload-dragger>
@@ -45,6 +43,9 @@ export default {
       } else if (status === 'error') {
         message.error(`${info.file.name} file upload failed.`);
       }
+    },
+    beforeUpload(file) {
+      return true;
     },
   }
 };

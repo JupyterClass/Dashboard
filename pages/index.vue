@@ -1,14 +1,11 @@
 <template>
-  <div style="height: 100vh; width: 100vw; overflow: hidden;">
-    <a-row style="height: 100%">
-      <a-col :xs="4"
-             style="height: 100%; background-color: #ffffff">
-        <sider/>
-      </a-col>
-      <a-col :xs="20" style="height: 100%; background-color: #f4f8ff">
-
-      </a-col>
-    </a-row>
+  <div class="main">
+    <div class="sider">
+      <sider/>
+    </div>
+    <div class="content">
+      <h1>LOL</h1>
+    </div>
   </div>
 </template>
 
@@ -57,5 +54,18 @@ export default {
 </script>
 
 <style scoped>
+.main {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
 
+.sider {
+  width: 228px;
+}
+
+.content {
+
+}
 </style>

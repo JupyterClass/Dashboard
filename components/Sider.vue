@@ -3,26 +3,18 @@
     <div>
       <div class="brand">
         <img src="~/assets/icon.jpg" width="200" alt="JupyterClass icon" />
-        <h1>Jupyter Class</h1>
+        <h3>Jupyter Class</h3>
       </div>
-      <div class="notebooks">
-        <div class="notebook-container"
-           v-for="(notebook, i) in notebooks"
-           :key="'notebook-' + i"
-           @click="handleNotebookClick(notebook)"
-           :style="{
-              flex: notebook.id === selectedNotebook ? 10 : 0.001,
-           }">
-        {{ notebook.id }}
-
-        <div class="notebook-status-indicator"
-             :style="{
-                backgroundColor: notebook.id === selectedNotebook ? '#57de9b' : '#ff9ea0',
-             }">
-        </div>
-        <questions v-if="notebook.id === selectedNotebook" />
-      </div>
-      </div>
+      <a-select style="width: 100%; padding: 10px;">
+        <a-select-option v-for="(notebook, i) in notebooks"
+                         :key="'notebook-' + i"
+                         @click="handleNotebookClick(notebook)">
+          {{ notebook.id }}
+        </a-select-option>
+      </a-select>
+    </div>
+    <div style="width: 100%; overflow: scroll;">
+      <questions />
     </div>
     <div class="upload">
       <upload />
@@ -31,12 +23,18 @@
 </template>
 
 <script>
+import { Select as ASelect } from 'ant-design-vue';
 import Upload from './Upload';
 import Questions from './Questions';
 
 export default {
   name: "Sider",
-  components: { Questions, Upload },
+  components: {
+    ASelect,
+    ASelectOption: ASelect.Option,
+    Questions,
+    Upload
+  },
   data() {
     return {
       selectedNotebook: '',
@@ -50,8 +48,10 @@ export default {
 
   methods: {
     handleNotebookClick(notebook) {
-      this.$store.commit('setSelectedNotebook', notebook);
-      this.selectedNotebook = notebook.id;
+      if (notebook.id !== this.selectedNotebook) {
+        this.$store.commit('setSelectedNotebook', notebook);
+        this.selectedNotebook = notebook.id;
+      }
     }
   }
 };
@@ -59,7 +59,7 @@ export default {
 
 <style scoped>
 
-  .brand > h1 {
+  .brand > h3 {
     width: 100%;
     text-align: center;
     padding-top: 5px;
@@ -72,7 +72,7 @@ export default {
     display: flex;
     flex-direction: column;
     flex-basis: auto;
-    justify-content: space-between;
+    /*justify-content: space-between;*/
     height: 100%;
   }
 
@@ -80,6 +80,7 @@ export default {
     display: flex;
     flex-direction: column;
     flex-basis: auto;
+    overflow: scroll;
     height: 100%;
   }
 
@@ -106,12 +107,12 @@ export default {
     width: 7px;
     background-color: #ff9ea0;
     transition: background-color 0.2s;
-    /*box-shadow: -2px 0 1px 1px #ffb5b7;*/
   }
 
   .upload {
     width: 100%;
     padding: 5px;
+    margin-top: auto;
   }
 
 </style>

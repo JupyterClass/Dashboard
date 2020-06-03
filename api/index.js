@@ -3,7 +3,14 @@ import endpoints from "./endpoints";
 
 export default function (req, res, next) {
 
-  console.log("got request: " + req.url);
+  console.log("got request: " + req.url + " " + req.method);
+
+  addCorsHeaders(req, res);
+  if (req.method === 'OPTIONS') {
+    // browser's CORS preflight request.
+    res.end("");
+    return;
+  }
 
   // Registering our endpoints
   for (const endpoint in endpoints) {
@@ -14,7 +21,14 @@ export default function (req, res, next) {
       return;
     }
   }
-
   // If client requests for some nonsense endpoint
   res.end(invalidEndpoint());
+
+}
+
+function addCorsHeaders(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "*");
+  res.setHeader("Access-Control-Allow-Headers", "*");
+  res.setHeader("Access-Control-Max-Age", "86400");
 }

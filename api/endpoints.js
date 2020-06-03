@@ -9,12 +9,19 @@ import {
   saveNotebookQuestions
 } from "./store/question";
 import { invalidEndpoint, invalidPayloadError } from "./errors";
+import { saveStudent, StudentStore } from "./store/student";
 
 export default {
 
+  '/join': async (req, res) => {
+    let { studentId, secret } = await getJson(req);
+    saveStudent(studentId);
+    res.end(JSON.stringify({ status: 'success', msg: 'Joined session successfully!' }));
+  },
+
   '/sync-stores': async (req, res) => {
     // For the client to synchronise its store with the server's
-    res.end(JSON.stringify({ NotebookStore, QuestionStore }));
+    res.end(JSON.stringify({ NotebookStore, QuestionStore, StudentStore }));
   },
 
   '/upload': async (req, res) => {

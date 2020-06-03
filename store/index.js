@@ -1,15 +1,17 @@
 export const state = () => ({
   NotebookStore: {},
   QuestionStore: {},
+  StudentStore: {},
 
   selectedNotebook: null,
   questions: {},
 });
 
 export const mutations = {
-  syncStore(state, { NotebookStore, QuestionStore }) {
+  syncStore(state, { NotebookStore, QuestionStore, StudentStore }) {
     state.NotebookStore = NotebookStore;
     state.QuestionStore = QuestionStore;
+    state.StudentStore = StudentStore;
   },
 
   setSelectedNotebook(state, notebook) {

@@ -52,10 +52,10 @@ export default {
         this.$store.commit('syncStore', response.data);
       });
 
-    // Register event
-    // socket.on('store-update', data => {
-    //   this.$store.commit('syncStore', data);
-    // })
+    // Register events
+    socket.on('store-update', data => {
+      this.$store.commit('syncStore', data);
+    })
   },
 
   computed: {

@@ -89,7 +89,8 @@ export default {
         studentId,
         practiceId,
         questionId,
-        completeness: evaluation.result === 'OK' ? 1 : 0
+        completeness: evaluation.result === 'OK' ? 100 : 0,
+        updatedAt: Date.now(),
       });
 
       res.end(JSON.stringify({

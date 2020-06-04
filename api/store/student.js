@@ -36,14 +36,21 @@ export function getStudentQuestionCompleteness({ studentId, practiceId, question
   return StudentStore[studentId]['progress'][practiceId][questionId]['completeness'];
 }
 
-export function setStudentProgress({ studentId, practiceId, questionId, completeness }) {
+export function setStudentProgress({
+  studentId,
+  practiceId,
+  questionId,
+  completeness,
+  updatedAt,
+}) {
   if (!(practiceId in StudentStore[studentId]['progress'])) {
     StudentStore[studentId]['progress'] = {
       [practiceId]: {}
     }
   }
   StudentStore[studentId]['progress'][practiceId][questionId] = {
-    completeness
+    completeness,
+    updatedAt,
   };
   pushStudentsState();
 }

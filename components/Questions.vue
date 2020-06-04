@@ -10,7 +10,7 @@
   import QuestionCard from "./QuestionCard";
 
   export default {
-    name: "Questions.vue",
+    name: "Questions",
     components: {
       QuestionCard,
     },

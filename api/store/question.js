@@ -1,7 +1,6 @@
 // This is the in-memory mock db that makes provisioning an actual db unnecessary.
 // An alternative is sqlite,
-import { io } from "../websocket";
-import { pushToClient } from "./sync";
+import { pushAllStateToClient } from "./sync";
 
 export const NotebookStore = {};
 /**
@@ -33,7 +32,7 @@ export function saveNotebookQuestions(notebook) {
       }
     }
   }
-  pushToClient();
+  pushAllStateToClient();
 }
 
 export function getNotebook(id) {
@@ -44,18 +43,13 @@ export function getAllNotebooks() {
   return Object.values(NotebookStore);
 }
 
-export function saveQuestion({
-  id = '',
-  data = {
-    expectedOutput: ''
-  },
-}) {
-  QuestionStore[id] = { id, data };
-  pushToClient();
+export function saveQuestion(practiceId, question) {
+  QuestionStore[practiceId][question.id] = question;
+  pushAllStateToClient();
 }
 
-export function getQuestion(id) {
-  return QuestionStore[id];
+export function getQuestion(practiceId, questionId) {
+  return QuestionStore[practiceId][questionId];
 }
 
 export function getAllQuestions() {

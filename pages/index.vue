@@ -55,6 +55,12 @@ export default {
     // Register events
     socket.on('store-update', data => {
       this.$store.commit('syncStore', data);
+    });
+    socket.on('students-update', data => {
+      this.$store.commit('syncStudents', data);
+    });
+    socket.on('questions-update', data => {
+      this.$store.commit('syncQuestions', data);
     })
   },
 

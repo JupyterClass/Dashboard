@@ -1,7 +1,7 @@
 <template>
   <div class="question-card">
     <div class="question-card-title">
-      <h3>Question {{ question.id }}</h3>
+      <h3>{{ question.id }}</h3>
       <status v-if="isLive"
               text="LIVE"
               color="#66cb7c" />
@@ -18,36 +18,49 @@
 </template>
 
 <script>
+import socket from '~/plugins/socket.io.js';
 import Status from "./indicators/Status";
 import IconButton from "./buttons/IconButton";
+
 export default {
   name: "QuestionCard",
   props: ['question'],
   components: { Status, IconButton },
   methods: {
     handlePlayButtonClick() {
-      this.$store.commit(
-        'setQuestionIsLive',
-        {
-          question: this.question,
-          startTime: Date.now(),
-        }
-      );
+      // this.$store.commit(
+      //   'setQuestionIsLive',
+      //   {
+      //     question: this.question,
+      //     startTime: Date.now(),
+      //   }
+      // );
+      socket.emit('client-question-enable', {
+        ...this.question,
+        isLive: true,
+        startTime: Date.now()
+      });
+      console.log('Emitted!');
     },
     handleStopButtonClick() {
-      this.$store.commit(
-        'setQuestionIsNotLive',
-        {
-          question: this.question,
-          endTime: Date.now(),
-        }
-      );
+      // this.$store.commit(
+      //   'setQuestionIsNotLive',
+      //   {
+      //     question: this.question,
+      //     endTime: Date.now(),
+      //   }
+      // );
+      socket.emit('client-question-enable', {
+        ...this.question,
+        isLive: false,
+        endTime: Date.now()
+      });
     }
   },
   computed: {
     isLive() {
-      return this.question.id in this.$store.state.questions &&
-             this.$store.state.questions[this.question.id].isLive;
+      return this.question.id in this.$store.state.QuestionStore[this.$store.state.selectedNotebook.id] &&
+             this.$store.state.QuestionStore[this.$store.state.selectedNotebook.id][this.question.id].isLive;
     }
   }
 };

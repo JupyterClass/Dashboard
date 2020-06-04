@@ -1,5 +1,6 @@
 import http from 'http';
 import socketIO from 'socket.io';
+import { eventHandlers } from "../store/sync";
 
 // TODO: Is there a way to share the socket instance with other modules???
 export let io;
@@ -21,6 +22,11 @@ export default function () {
     // Add socket.io events
     io.on('connection', socket => {
       console.log('Connected');
+
+      // Registering event handlers from sync.js
+      for (const event in eventHandlers) {
+        socket.on(event, eventHandlers[event]);
+      }
     });
   })
 }

@@ -6,17 +6,23 @@ import {
   QuestionStore,
   getAllQuestions,
   saveNotebook,
-  saveNotebookQuestions
+  saveNotebookQuestions, getQuestion, getNotebook
 } from "./store/question";
 import { invalidEndpoint, invalidPayloadError } from "./errors";
-import { saveStudent, StudentStore } from "./store/student";
+import { getStudent, saveStudent, setStudentProgress, StudentStore } from "./store/student";
 
 export default {
 
   '/join': async (req, res) => {
-    let { studentId, secret } = await getJson(req);
-    saveStudent(studentId);
-    res.end(JSON.stringify({ status: 'success', msg: 'Joined session successfully!' }));
+    let { studentId, practiceId, secret } = await getJson(req);
+
+    if (getNotebook(practiceId)) {
+      saveStudent(studentId);
+      res.end(JSON.stringify({ status: 'success', msg: 'Joined session successfully!' }));
+    } else {
+      console.log(studentId, 'tried to join', practiceId, "which doesn't exist!");
+      res.end(JSON.stringify({ status: 'error', msg: "Tried to join a practice session that doesn't exist!"}));
+    }
   },
 
   '/sync-stores': async (req, res) => {
@@ -68,7 +74,31 @@ export default {
 
     if (isValidPayload(payload)) {
       const { studentId, practiceId, questionId, output } = payload;
-      res.end("Correct: " + evaluate(output));
+
+      if (!getStudent(studentId)) {
+        console.log('Student ' + studentId + ' not found in Student store. Did she join with the correct secret?');
+        return
+      }
+
+      const expectedOutput = getQuestion(practiceId, questionId).expected;
+
+      const evaluation = evaluate(output, expectedOutput);
+
+      // TODO: Update student store with student's completeness
+      setStudentProgress({
+        studentId,
+        practiceId,
+        questionId,
+        completeness: evaluation.result === 'OK' ? 1 : 0
+      });
+
+      res.end(JSON.stringify({
+        type: 'qn-eval',
+        evaluation,
+        metadata: {
+          studentId, practiceId, questionId
+        },
+      }));
     } else {
       res.end(invalidPayloadError());
     }

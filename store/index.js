@@ -4,7 +4,6 @@ export const state = () => ({
   StudentStore: {},
 
   selectedNotebook: null,
-  questions: {},
 });
 
 export const mutations = {
@@ -14,30 +13,43 @@ export const mutations = {
     state.StudentStore = StudentStore;
   },
 
+  syncQuestions(state, { QuestionStore }) {
+    state.QuestionStore = QuestionStore;
+  },
+
+  syncStudents(state, { StudentStore }) {
+    state.StudentStore = StudentStore;
+  },
+
   setSelectedNotebook(state, notebook) {
     state.selectedNotebook = notebook;
-    state.questions = {...state.QuestionStore[notebook.id]};
   },
 
   setQuestionIsLive(state, { question, startTime }) {
-    state.questions = {
-      ...state.questions,
-      [question.id]: {
-        ...question,
-        startTime,
-        isLive: true,
+    state.QuestionStore = {
+      ...state.QuestionStore,
+      [state.selectedNotebook.id]: {
+        ...(state.QuestionStore[state.selectedNotebook.id] || {}),
+        [question.id]: {
+          ...question,
+          startTime,
+          isLive: true,
+        }
       }
-    }
+    };
   },
 
   setQuestionIsNotLive(state, { question, endTime }) {
-    state.questions = {
-      ...state.questions,
-      [question.id]: {
-        ...question,
-        endTime,
-        isLive: false,
+    state.QuestionStore = {
+      ...state.QuestionStore,
+      [state.selectedNotebook.id]: {
+        ...(state.QuestionStore[state.selectedNotebook.id] || {}),
+        [question.id]: {
+          ...question,
+          endTime,
+          isLive: false,
+        }
       }
-    }
+    };
   }
 };

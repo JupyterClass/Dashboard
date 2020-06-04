@@ -75,7 +75,7 @@ export default {
     timestampToMinsAgo(timestamp) {
       const minDiff = dayjs().diff(dayjs(timestamp), 'minute');
       if (minDiff === 0) {
-        return + 'Less than a min ago';
+        return 'Less than a min ago';
       }
       return minDiff + ' mins ago';
     }

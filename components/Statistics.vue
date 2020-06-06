@@ -9,17 +9,17 @@
 <!--               icon="dashboard"-->
 <!--               accent-color="#3eb5ff"/>-->
     <accent-card title="CLASS PROGRESS">
-      <pie-chart :data="chartData" :options="chartOptions"></pie-chart>
+      <doughnut-chart :data="chartData" :options="chartOptions" />
     </accent-card>
   </div>
 </template>
 
 <script>
 import AccentCard from "./charts/AccentCard";
-import PieChart from "./charts/DoughnutChart";
+import DoughnutChart from "./charts/DoughnutChart";
 export default {
   name: "Statistics",
-  components: { AccentCard, PieChart },
+  components: { AccentCard, DoughnutChart },
   data() {
     return {
       chartOptions: {
@@ -34,17 +34,15 @@ export default {
       let incomplete = 0;
 
       const students = this.$store.state.StudentStore; // TODO: Have helpers in store?
-      const questions = this.$store.state.QuestionStore;
+      const practiceId = this.$store.state.selectedNotebook.id;
 
       for (const student of Object.values(students)) {
-        for (const practiceId in student.progress) {
-          for (const questionId in student.progress[practiceId]) {
-            if (questions[practiceId][questionId].isLive) {
-              if (student.progress[practiceId][questionId].completeness === 100) {
-                completed++;
-              } else {
-                incomplete++;
-              }
+        for (const questionId in student.progress[practiceId]) {
+          if (this.$store.state.selectedQuestions.has(questionId)) {
+            if (student.progress[practiceId][questionId].completeness === 100) {
+              completed++;
+            } else {
+              incomplete++;
             }
           }
         }

@@ -30,8 +30,6 @@ export function pushStudentsState() {
 export const eventHandlers = {
   'client-question-enable': data => {
     const { practiceId, id } = data;
-    console.log(data);
-    console.log(QuestionStore);
     QuestionStore[practiceId][id] = data;
     pushQuestionsState();
   },

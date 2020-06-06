@@ -18,6 +18,23 @@
         </div>
       </div>
     </div>
+    <div class="question-card-body">
+      <div class="timestamp">
+        {{ startTime }}
+        <hr/>
+        <a-icon v-if="isLive" type="sync" spin="true"/>
+        <span v-else-if="isCompleted">
+          {{ endTime }}
+        </span>
+        <a-icon v-else type="question" />
+      </div>
+      <span v-if="isLive">
+        {{ readableElapsed }}
+      </span>
+      <span v-else-if="isCompleted">
+        {{ readableDuration }}
+      </span>
+    </div>
     <div class="btn">
       <a-button :block="true"
                 v-if="isLive"
@@ -54,14 +71,40 @@ import socket from '~/plugins/socket.io.js';
 import Status from "./indicators/Status";
 import IconButton from "./buttons/IconButton";
 import {
+  Icon as AIcon,
   Button as AButton
 } from "ant-design-vue";
+import dayjs from "dayjs";
+import { readableDuration } from "../utils/datetime";
 
 export default {
   name: "QuestionCard",
   props: ['question'],
-  components: { Status, IconButton, AButton },
+  components: { Status, IconButton, AButton, AIcon },
+  data() {
+    return {
+      elapsed: Math.round((Date.now() - this.question.startTime) / 1000),
+      timerIntervalFn: null,
+    }
+  },
+
+  mounted() {
+    if (this.question.isLive) {
+      this.startTimer();
+    }
+  },
+
   methods: {
+
+    startTimer() {
+      this.timerIntervalFn = setInterval(() => {
+        this.elapsed = Math.round((Date.now() - this.question.startTime) / 1000);
+      }, 1000);
+    },
+    stopTimer() {
+      clearInterval(this.timerIntervalFn);
+    },
+
     handlePlayButtonClick() {
       // this.$store.commit(
       //   'setQuestionIsLive',
@@ -75,6 +118,9 @@ export default {
         isLive: true,
         startTime: Date.now()
       });
+      this.elapsed = 0;
+      this.startTimer();
+      this.showQuestionInformation();
     },
     handleStopButtonClick() {
       // this.$store.commit(
@@ -89,13 +135,22 @@ export default {
         isLive: false,
         endTime: Date.now()
       });
+      this.stopTimer();
+      this.hideQuestionInformation();
     },
     handleToggleQuestionVisibility() {
       if (this.shouldShow) {
-        this.$store.commit('unsetSelectedQuestion', this.question.id);
+        this.hideQuestionInformation();
       } else {
-        this.$store.commit('setSelectedQuestion', this.question.id);
+        this.showQuestionInformation();
       }
+    },
+
+    showQuestionInformation() {
+      this.$store.commit('setSelectedQuestion', this.question.id);
+    },
+    hideQuestionInformation() {
+      this.$store.commit('unsetSelectedQuestion', this.question.id);
     },
   },
   computed: {
@@ -108,6 +163,29 @@ export default {
     },
     shouldShow() {
       return this.$store.state.selectedQuestions.indexOf(this.question.id) !== -1;
+    },
+    startTime() {
+      return dayjs(this.question.startTime).format('h:mm a');
+    },
+    endTime() {
+      return dayjs(this.question.endTime).format('h:mm a');
+    },
+    duration() {
+      return this.question.endTime - this.question.startTime;
+    },
+    readableDuration() {
+      return readableDuration(this.question.startTime, this.question.endTime);
+    },
+    readableElapsed() {
+      let mins = Math.floor(this.elapsed / 60);
+      if (mins < 10) {
+        mins = '0' + mins;
+      }
+      let secs = this.elapsed % 60;
+      if (secs < 10) {
+        secs = '0' + secs;
+      }
+      return mins + ':' + secs;
     }
   }
 };
@@ -138,6 +216,13 @@ export default {
   width: 100%;
 }
 
+.question-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 .accent {
   position: absolute;
   top: 0;
@@ -149,6 +234,18 @@ export default {
 
 .btn {
   margin-top: 8px;
+}
+
+.timestamp {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.timestamp > hr {
+  flex: 1;
+  margin: 0 6px 0 6px;
 }
 
 </style>

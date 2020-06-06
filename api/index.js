@@ -1,4 +1,4 @@
-import { invalidEndpoint } from "./errors";
+import { invalidEndpoint } from "./response/error";
 import endpoints from "./endpoints";
 
 export default function (req, res, next) {

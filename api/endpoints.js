@@ -8,7 +8,15 @@ import {
   saveNotebook,
   saveNotebookQuestions, getQuestion, getNotebook
 } from "./store/question";
-import { invalidEndpoint, invalidPayloadError } from "./errors";
+import {
+  duplicateStudentIdError,
+  invalidEndpoint,
+  invalidPayloadError,
+  nonexistentPracticeError
+} from "./response/error";
+import {
+  joinedSessionSuccess
+} from "./response/success";
 import { getStudent, saveStudent, setStudentProgress, StudentStore } from "./store/student";
 
 export default {
@@ -17,11 +25,17 @@ export default {
     let { studentId, practiceId, secret } = await getJson(req);
 
     if (getNotebook(practiceId)) {
-      saveStudent(studentId);
-      res.end(JSON.stringify({ status: 'success', msg: 'Joined session successfully!' }));
+      // the notebook exists, and the student id isn't already in use
+      if (!getStudent(studentId)) {
+        saveStudent(studentId);
+        res.end(joinedSessionSuccess());
+      } else {
+        console.log(`Rejecting studentId: "${studentId}" -> already in use.`);
+        res.end(duplicateStudentIdError());
+      }
     } else {
-      console.log(studentId, 'tried to join', practiceId, "which doesn't exist!");
-      res.end(JSON.stringify({ status: 'error', msg: "Tried to join a practice session that doesn't exist!"}));
+      console.log(`Student "${studentId}" tried to join non-existent Practice "${practiceId}"`);
+      res.end(nonexistentPracticeError());
     }
   },
 
@@ -77,7 +91,7 @@ export default {
 
       if (!getStudent(studentId)) {
         console.log('Student ' + studentId + ' not found in Student store. Did she join with the correct secret?');
-        return
+        return;
       }
 
       const expectedOutput = getQuestion(practiceId, questionId).expected;

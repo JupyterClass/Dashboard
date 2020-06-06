@@ -51,6 +51,7 @@ export function setStudentProgress({
 
   if (!(questionId in StudentStore[studentId]['progress'][practiceId])) {
     StudentStore[studentId]['progress'][practiceId][questionId] = {
+      id: questionId,
       firstAttempt: updatedAt,
       completeness,
       updatedAt,

@@ -4,6 +4,7 @@ export const state = () => ({
   StudentStore: {},
 
   selectedNotebook: null,
+  selectedQuestions: new Set(),
 });
 
 export const mutations = {
@@ -23,6 +24,10 @@ export const mutations = {
 
   setSelectedNotebook(state, notebook) {
     state.selectedNotebook = notebook;
+  },
+
+  setSelectedQuestions(state, questionIds) {
+    state.selectedQuestions = new Set(questionIds);
   },
 
   setQuestionIsLive(state, { question, startTime }) {
@@ -51,5 +56,5 @@ export const mutations = {
         }
       }
     };
-  }
+  },
 };

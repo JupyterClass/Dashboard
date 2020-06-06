@@ -5,9 +5,11 @@
         <img src="~/assets/icon.jpg" width="200" alt="JupyterClass icon" />
         <h3>Jupyter Class</h3>
       </div>
-      <a-select style="width: 100%; padding: 10px;">
+      <a-select placeholder="Notebook"
+                :value="selectedNotebook && selectedNotebook.id"
+                style="width: 100%; padding: 10px;">
         <a-select-option v-for="(notebook, i) in notebooks"
-                         :key="'notebook-' + i"
+                         :key="notebook.id"
                          @click="handleNotebookClick(notebook)">
           {{ notebook.id }}
         </a-select-option>
@@ -35,11 +37,6 @@ export default {
     Questions,
     Upload
   },
-  data() {
-    return {
-      selectedNotebook: '',
-    }
-  },
 
   computed: {
     selectedNotebook() { return this.$store.state.selectedNotebook },
@@ -50,6 +47,11 @@ export default {
     handleNotebookClick(notebook) {
       if (notebook.id !== this.selectedNotebook) {
         this.$store.commit('setSelectedNotebook', notebook);
+        this.$store.commit('setSelectedQuestions',
+          Object.values(
+            this.$store.state.QuestionStore
+              [this.selectedNotebook.id]).map(qn => qn.id)
+        );
         this.selectedNotebook = notebook.id;
       }
     }

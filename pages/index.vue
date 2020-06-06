@@ -6,9 +6,6 @@
     <div class="content">
       <div class="content-primary">
         <statistics/>
-        <div class="classroom-layout-wrapper">
-          <classroom-layout/>
-        </div>
       </div>
       <div class="content-secondary">
         <students/>
@@ -50,6 +47,10 @@ export default {
     this.$axios.get(process.env.API_SYNC_STORES)
       .then(response => {
         this.$store.commit('syncStore', response.data);
+        this.$store.commit('setSelectedNotebook', Object.values(this.notebooks)[0]);
+        this.$store.commit('setSelectedQuestions',
+          Object.values(this.questions[this.selectedNotebook.id]).map(qn => qn.id)
+        );
       });
 
     // Register events
@@ -70,6 +71,9 @@ export default {
     },
     questions() {
       return this.$store.state.QuestionStore;
+    },
+    selectedNotebook() {
+      return this.$store.state.selectedNotebook;
     }
   }
 }

@@ -2,7 +2,7 @@
   <div class="questions">
     <question-card v-for="(question, i) in questions"
                    :question="question"
-                   :key="'question-' + i" />
+                   :key="question.practiceId + question.questionId + i" />
   </div>
 </template>
 

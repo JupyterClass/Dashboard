@@ -48,9 +48,24 @@ export function setStudentProgress({
       [practiceId]: {}
     }
   }
-  StudentStore[studentId]['progress'][practiceId][questionId] = {
-    completeness,
-    updatedAt,
-  };
+
+  if (!(questionId in StudentStore[studentId]['progress'][practiceId])) {
+    StudentStore[studentId]['progress'][practiceId][questionId] = {
+      firstAttempt: updatedAt,
+      completeness,
+      updatedAt,
+    }
+  }
+
+  const studentQuestionState = StudentStore[studentId]['progress'][practiceId][questionId];
+
+  studentQuestionState.completeness = completeness;
+  studentQuestionState.updatedAt = updatedAt;
+
+  if (completeness === 100 && !studentQuestionState.completedAt) {
+    // completedAt timestamp hasn't been set already
+    studentQuestionState.completedAt = updatedAt
+  }
+
   pushStudentsState();
 }

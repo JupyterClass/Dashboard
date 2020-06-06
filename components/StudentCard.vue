@@ -68,6 +68,7 @@ export default {
 
       return attemptedQuestions;
     },
+
     lastAttemptMinsAgo() {
       if (this.attemptedQuestions.length > 0) {
         let lastAttemptTimestamp = 0;
@@ -124,7 +125,7 @@ export default {
         return '-';
       }
       if (timeInSeconds <= 60) {
-        return timeInSeconds + ' secs';
+        return Math.round(timeInSeconds) + ' secs';
       }
       return Math.round(timeInSeconds / 60) + ' mins';
     }
@@ -167,5 +168,8 @@ export default {
 }
 .timestamp {
   text-align: right;
+  font-size: 0.9em;
+  margin-top: 5px;
+  color: #999da8;
 }
 </style>

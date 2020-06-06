@@ -36,4 +36,14 @@ h4 {
   box-sizing: border-box;
   margin: 0;
 }
+
+@keyframes glow {
+  from {
+    background: #3de88d;
+  }
+  to {
+    background: #6effa3;
+  }
+}
+
 </style>

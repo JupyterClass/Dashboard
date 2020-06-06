@@ -17,18 +17,35 @@
                        size="15"/>
         </div>
       </div>
-      <status v-if="isLive"
-              text="LIVE"
-              color="#66cb7c" />
     </div>
-    <icon-button v-if="isLive"
-                 type="stop"
-                 color="salmon"
-                 @click.stop="handleStopButtonClick"/>
-    <icon-button v-else
-                 type="play-circle"
-                 color="#66cb7c"
-                 @click.stop="handlePlayButtonClick"/>
+    <div class="btn">
+      <a-button :block="true"
+                v-if="isLive"
+                type="danger"
+                @click.stop="handleStopButtonClick">
+        STOP
+      </a-button>
+      <a-button :block="true"
+                v-else-if="isCompleted"
+                @click.stop="handlePlayButtonClick">
+        RESTART
+      </a-button>
+      <a-button :block="true"
+                v-else
+                type="primary"
+                @click.stop="handlePlayButtonClick">
+        START
+      </a-button>
+    </div>
+    <div class="accent"
+         :style="{
+            animation: isLive ? 'glow 1.3s infinite alternate' : null,
+            width: isLive ? '12px' : '8px',
+            background: (
+              isCompleted ? '#ffcb52' :
+                isLive ? '#3de88d' : 'salmon'
+            )
+         }"/>
   </div>
 </template>
 
@@ -36,12 +53,14 @@
 import socket from '~/plugins/socket.io.js';
 import Status from "./indicators/Status";
 import IconButton from "./buttons/IconButton";
-import { Icon as AIcon } from "ant-design-vue";
+import {
+  Button as AButton
+} from "ant-design-vue";
 
 export default {
   name: "QuestionCard",
   props: ['question'],
-  components: { Status, IconButton, AIcon },
+  components: { Status, IconButton, AButton },
   methods: {
     handlePlayButtonClick() {
       // this.$store.commit(
@@ -99,8 +118,10 @@ export default {
   position: relative;
   box-shadow: 0 2px 8px 2px #d5d8e2;
   border-radius: 4px;
-  padding: 10px;
+  padding: 10px 18px 10px 10px;
   margin: 10px;
+  overflow: hidden;
+  transition: opacity 0.3s;
 }
 
 .question-card-head {
@@ -117,9 +138,17 @@ export default {
   width: 100%;
 }
 
-.ended-overlay {
+.accent {
   position: absolute;
-  left: 50%;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 100%;
+  transition: all 0.3s;
+}
+
+.btn {
+  margin-top: 8px;
 }
 
 </style>

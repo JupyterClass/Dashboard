@@ -29,6 +29,10 @@ export default {
   },
   computed: {
     chartData() {
+
+      if (!this.$store.state.selectedNotebook) {
+        return [];
+      }
       // Live questions only
       let completed = 0;
       let incomplete = 0;

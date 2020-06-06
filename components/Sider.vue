@@ -52,7 +52,6 @@ export default {
             this.$store.state.QuestionStore
               [this.selectedNotebook.id]).map(qn => qn.id)
         );
-        this.selectedNotebook = notebook.id;
       }
     }
   }

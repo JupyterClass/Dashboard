@@ -87,11 +87,11 @@ export default {
     }
 
     if (isValidPayload(payload)) {
-      const { studentId, practiceId, questionId, output } = payload;
+      let { studentId, practiceId, questionId, output } = payload;
+      questionId = questionId.toString();
 
       if (!getStudent(studentId)) {
-        console.log('Student ' + studentId + ' not found in Student store. Did she join with the correct secret?');
-        return;
+        saveStudent(studentId); // Anything wrong with this?
       }
 
       const expectedOutput = getQuestion(practiceId, questionId).expected;

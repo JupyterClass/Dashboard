@@ -23,6 +23,7 @@ export function saveNotebookQuestions(notebook) {
       'Question' in cell['metadata']
     ) {
       const questionCell = cell['metadata']['Question'];
+      questionCell.id = questionCell.id.toString();
       if (!(notebook.id in QuestionStore)) {
         QuestionStore[notebook.id] = {};
       }

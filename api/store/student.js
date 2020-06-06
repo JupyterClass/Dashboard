@@ -16,9 +16,10 @@ export function saveStudent(studentId) {
   StudentStore[studentId] = {
     id: studentId,
     progress: {
-      // practiceId,
-      // questionId,
-      // completeness: 0 to 100
+      // practiceId: {,
+      //   questionId,
+      //   completeness: 0 to 100
+      // }
     },
   };
   pushStudentsState();
@@ -44,9 +45,7 @@ export function setStudentProgress({
   updatedAt,
 }) {
   if (!(practiceId in StudentStore[studentId]['progress'])) {
-    StudentStore[studentId]['progress'] = {
-      [practiceId]: {}
-    }
+    StudentStore[studentId]['progress'][practiceId] = {}
   }
 
   if (!(questionId in StudentStore[studentId]['progress'][practiceId])) {

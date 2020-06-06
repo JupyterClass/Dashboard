@@ -4,7 +4,7 @@ export const state = () => ({
   StudentStore: {},
 
   selectedNotebook: null,
-  selectedQuestions: new Set(),
+  selectedQuestions: [],
 });
 
 export const mutations = {
@@ -27,7 +27,15 @@ export const mutations = {
   },
 
   setSelectedQuestions(state, questionIds) {
-    state.selectedQuestions = new Set(questionIds);
+    state.selectedQuestions = [...questionIds];
+  },
+
+  setSelectedQuestion(state, questionId) {
+    state.selectedQuestions = [questionId, ...state.selectedQuestions];
+  },
+
+  unsetSelectedQuestion(state, questionId) {
+    state.selectedQuestions = state.selectedQuestions.filter(id => id !== questionId);
   },
 
   setQuestionIsLive(state, { question, startTime }) {

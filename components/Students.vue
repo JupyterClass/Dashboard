@@ -9,18 +9,6 @@
 <!--        Kick All-->
 <!--      </a-button>-->
     </div>
-    <div class="questions">
-      <a-select mode="tags"
-                placeholder="Questions"
-                style="width: 100%"
-                :value="selectedQuestions"
-                @change="handleSelectQuestionChange">
-        <a-select-option v-for="(question, i) in questions"
-                         :key="question.id">
-          {{ question.id }}
-        </a-select-option>
-      </a-select>
-    </div>
     <student-card v-for="(student, i) in students"
                   :key="'student-' + i"
                   :student="student"/>
@@ -69,9 +57,6 @@ export default {
       //  1. are you sure?
       //  2. eject all students from the server
     },
-    handleSelectQuestionChange(questionIds) {
-      this.$store.commit('setSelectedQuestions', questionIds);
-    },
   }
 };
 </script>
@@ -88,15 +73,5 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-.questions {
-  display: flex;
-  padding: 0 8px 0 8px;
-}
-.question {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px;
 }
 </style>

@@ -42,7 +42,7 @@ export default {
 
       for (const student of Object.values(students)) {
         for (const questionId in student.progress[practiceId]) {
-          if (this.$store.state.selectedQuestions.has(questionId)) {
+          if (this.$store.state.selectedQuestions.indexOf(questionId) !== -1) {
             if (student.progress[practiceId][questionId].completeness === 100) {
               completed++;
             } else {

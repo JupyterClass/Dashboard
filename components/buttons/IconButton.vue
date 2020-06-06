@@ -1,6 +1,7 @@
 <template>
-  <a-icon v-on="$listeners"
-          style="font-size: 30px;"
+  <a-icon class="icon-wrapper"
+          v-on="$listeners"
+          :style="`font-size: ${size || 30}px;`"
           theme="twoTone"
           :twoToneColor="color"
           :type="type" />
@@ -11,7 +12,7 @@ import { Icon as AIcon } from 'ant-design-vue';
 
 export default {
   name: "IconButton",
-  props: ['type', 'color'],
+  props: ['type', 'color', 'size'],
   components: { AIcon }
 };
 </script>
@@ -19,6 +20,5 @@ export default {
 <style scoped>
 .icon-wrapper {
   cursor: pointer;
-  border: 1px solid red;
 }
 </style>

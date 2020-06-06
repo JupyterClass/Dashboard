@@ -55,7 +55,7 @@ export default {
       }
 
       for (const [questionId, completeness] of Object.entries(notebookProgress)) {
-        if (this.$store.state.selectedQuestions.has(questionId)) {
+        if (this.$store.state.selectedQuestions.indexOf(questionId) !== -1) {
           attemptedQuestions.push({ questionId, ...completeness });
         }
       }

@@ -22,7 +22,7 @@
       <div class="timestamp">
         {{ startTime }}
         <hr/>
-        <a-icon v-if="isLive" type="sync" spin="true"/>
+        <a-icon v-if="isLive" type="sync" :spin="true"/>
         <span v-else-if="isCompleted">
           {{ endTime }}
         </span>
@@ -76,6 +76,21 @@ import {
 } from "ant-design-vue";
 import dayjs from "dayjs";
 import { readableDuration } from "../utils/datetime";
+
+function getRandomColor() {
+  const colors = [
+    "#ff615d",
+    "#ff84a6",
+    "#f284ff",
+    "#a15bff",
+    "#6362ff",
+    "#2bb2ff",
+    "#22ffe9",
+    "#21d575",
+    "#cab326",
+  ];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
 
 export default {
   name: "QuestionCard",

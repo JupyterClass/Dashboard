@@ -3,8 +3,6 @@ import endpoints from "./endpoints";
 
 export default function (req, res, next) {
 
-  console.log("got request: " + req.url + " " + req.method);
-
   addCorsHeaders(req, res);
   if (req.method === 'OPTIONS') {
     // browser's CORS preflight request.

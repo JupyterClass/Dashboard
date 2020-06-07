@@ -1,15 +1,10 @@
 <template>
   <div class="statistics">
-<!--    <stat-card title="completed"-->
-<!--               stat="88%"-->
-<!--               icon="pie-chart"-->
-<!--               accent-color="#3eb5ff"/>-->
-<!--    <stat-card title="Avg speed"-->
-<!--               stat="10m 43s"-->
-<!--               icon="dashboard"-->
-<!--               accent-color="#3eb5ff"/>-->
     <accent-card title="CLASS PROGRESS">
-      <doughnut-chart :data="chartData" :options="chartOptions" />
+      <doughnut-chart :data="classProgressChartData" :options="chartOptions" />
+    </accent-card>
+    <accent-card title="TIME TAKEN">
+      <bar-chart :data="questionsTimeTakenChartData" :options="chartOptions" />
     </accent-card>
   </div>
 </template>
@@ -17,9 +12,10 @@
 <script>
 import AccentCard from "./charts/AccentCard";
 import DoughnutChart from "./charts/DoughnutChart";
+import BarChart from "./charts/BarChart";
 export default {
   name: "Statistics",
-  components: { AccentCard, DoughnutChart },
+  components: { BarChart, AccentCard, DoughnutChart },
   data() {
     return {
       chartOptions: {
@@ -27,8 +23,9 @@ export default {
       },
     };
   },
+
   computed: {
-    chartData() {
+    classProgressChartData() {
 
       if (!this.$store.state.selectedNotebook) {
         return [];
@@ -62,6 +59,74 @@ export default {
           }
         ]
       }
+    },
+
+    questionsTimeTakenChartData() {
+      const students = this.$store.state.StudentStore;
+      const selectedNotebook = this.$store.state.selectedNotebook;
+      const selectedQuestions = this.$store.state.selectedQuestions;
+
+      if (!selectedNotebook) {
+        return {};
+      }
+
+      const questionDurations = {};
+      let minDuration = 100000; // minutes
+      let maxDuration = -100000; // minutes
+      for (const student of Object.values(students)) {
+        const studentAttemptedQuestions = student.progress[selectedNotebook.id];
+
+        if (!studentAttemptedQuestions) {
+          continue;
+        }
+
+        for (const question of Object.values(studentAttemptedQuestions)) {
+
+          const questionStartTime = this.$store.state.QuestionStore[selectedNotebook.id][question.id].startTime;
+
+          if (selectedQuestions.includes(question.id)) {
+            let duration = Math.round(
+              ((question.completedAt || Date.now()) - questionStartTime) / 1000 / 60
+            ); // secs
+
+            if (!(question.id in questionDurations)) {
+              // questionDurations[question.id] = Array(20).fill(0);
+              questionDurations[question.id] = [];
+            }
+            // questionDurations[question.id][duration]++;
+            questionDurations[question.id].push(duration);
+            minDuration = Math.min(minDuration, duration);
+            maxDuration = Math.max(maxDuration, duration);
+          }
+        }
+      }
+
+      maxDuration = Math.max(maxDuration, minDuration + 10);
+
+      const labels = []; // Minimum 10 intervals of 60 secs
+      for (let i = minDuration; i <= maxDuration; i++) {
+        labels.push(i);
+      }
+
+      const numIntervals = maxDuration - minDuration;
+      const datasets = [];
+      for (const questionId in questionDurations) {
+        const bins = Array(numIntervals).fill(0);
+        console.log(bins);
+        for (const duration of questionDurations[questionId]) {
+          bins[duration]++;
+        }
+        datasets.push({
+          label: questionId,
+          borderWidth: 1,
+          data: bins,
+        })
+      }
+
+      return {
+        labels,
+        datasets
+      }
     }
   }
 };
@@ -70,8 +135,10 @@ export default {
 <style scoped>
 .statistics {
   display: flex;
+  flex-wrap: wrap;
 }
 .statistics > div {
+  flex: 1;
   margin: 10px;
   color: #3eb5ff;
 }

@@ -125,6 +125,7 @@ export default {
 .students {
   position: relative;
   background-color: #e6e9f4;
+  min-height: 100%;
 }
 .students-in-progress {
   display: flex;

@@ -1,7 +1,7 @@
-import { Doughnut } from "vue-chartjs";
+import { Line } from "vue-chartjs";
 export default {
-  extends: Doughnut,
-  name: "DoughnutChart",
+  extends: Line,
+  name: "LineChart",
   props: ["title", "data", "options"],
   methods: {
     render() {
@@ -15,8 +15,6 @@ export default {
     }
   },
   mounted() {
-    // this.chartData is created in the mixin.
-    // If you want to pass options please create a local options object
     this.render();
   },
   watch: {

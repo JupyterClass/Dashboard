@@ -158,12 +158,13 @@ export default {
 
 .lesson-info {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
+  padding: 8px;
 }
 
 .clock {
-  flex: 1;
   height: 100%;
   margin-left: 16px;
   /*background-color: red;*/

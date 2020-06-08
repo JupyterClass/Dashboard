@@ -106,6 +106,10 @@ export default {
 
     timeTaken(attemptedQuestion) {
       const questionStartTime = this.questionStartTime(attemptedQuestion);
+      if (!questionStartTime) {
+        // Sonic the hedgehog coder finished even before the instructor got to the qn
+        return -1;
+      }
 
       if (!attemptedQuestion.completedAt) {
         return this.secondsSince(questionStartTime);

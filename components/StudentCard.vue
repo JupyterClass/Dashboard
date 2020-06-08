@@ -1,7 +1,12 @@
 <template>
   <div class="student-card" @click="visible = !visible">
-    <div class="student-profile">
-      <h3>{{ student.id }}</h3>
+    <div class="student-card-head">
+      <h3 class="student-profile">
+        {{ student.id }}
+      </h3>
+      <div class="timestamp">
+        {{ lastAttemptMinsAgo }}
+      </div>
     </div>
     <div v-if="visible" class="progress">
       <div v-for="(attemptedQuestion, i) of attemptedQuestions"
@@ -13,9 +18,6 @@
             {{ strftime(timeTaken(attemptedQuestion)) }}
           </div>
         </div>
-      </div>
-      <div class="timestamp">
-        {{ lastAttemptMinsAgo }}
       </div>
     </div>
     <accent :color="hasFinishedAllQuestions ? '#45b1ff' : '#ff6388'"
@@ -86,7 +88,7 @@ export default {
       if (minDiff === 0) {
         return 'Less than a min ago';
       }
-      return minDiff + ' mins ago';
+      return minDiff + 'm ago';
     },
 
     secondsSince(timestamp) {
@@ -113,9 +115,9 @@ export default {
         return '-';
       }
       if (timeInSeconds <= 60) {
-        return Math.round(timeInSeconds) + ' secs';
+        return Math.round(timeInSeconds) + 's';
       }
-      return Math.round(timeInSeconds / 60) + ' mins';
+      return Math.round(timeInSeconds / 60) + 'm';
     }
   },
 };
@@ -124,8 +126,6 @@ export default {
 <style scoped>
 .student-card {
   position: relative;
-  display: flex;
-  align-items: center;
   background-color: white;
   box-shadow: 0 2px 6px 1px #d5d8e2;
   padding: 8px 8px 8px 14px;
@@ -134,14 +134,19 @@ export default {
   overflow: hidden;
   cursor: pointer;
 }
-.student-profile {
+.student-card-head {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  min-width: 80px;
-  border-radius: 4px;
-  margin-right: 8px;
+}
+.student-profile {
+  margin: 0 8px 4px 0 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+.student-profile > div {
 }
 .progress {
   flex: 1;
@@ -160,7 +165,6 @@ export default {
 .timestamp {
   text-align: right;
   font-size: 0.9em;
-  margin-top: 5px;
   color: #999da8;
 }
 </style>

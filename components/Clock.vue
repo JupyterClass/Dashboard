@@ -1,6 +1,6 @@
 <template>
   <div v-bind="$attrs">
-    {{ currentTime }}
+    <code class="clock-text">{{ currentTime }}</code>
   </div>
 </template>
 
@@ -17,12 +17,15 @@ export default {
   },
   mounted() {
     this.intervalFn = setInterval(() => {
-      this.currentTime = dayjs(Date.now()).format('hh:mm:ss a');
+      this.currentTime = dayjs(Date.now()).format('HH:mm:ss');
     }, 1000);
   }
 };
 </script>
 
 <style scoped>
-
+.clock-text {
+  font-size: 3.2vmax;
+  color: #8993a9;
+}
 </style>

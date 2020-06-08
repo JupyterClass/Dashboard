@@ -39,10 +39,10 @@ h4 {
 
 @keyframes glow {
   from {
-    background: #3de88d;
+    background: #129cff;
   }
   to {
-    background: #6effa3;
+    background: #0ee4ff;
   }
 }
 

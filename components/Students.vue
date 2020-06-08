@@ -125,7 +125,6 @@ export default {
 .students {
   position: relative;
   background-color: #e6e9f4;
-  border-radius: 10px;
 }
 .students-in-progress {
   display: flex;

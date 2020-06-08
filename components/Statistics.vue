@@ -1,12 +1,10 @@
 <template>
   <div class="statistics">
-    <div class="top-row">
-      <clock class="clock"/>
-      <doughnut-chart class="doughnut-chart"
-                      title="PROGRESS"
-                      :data="classProgressChartData"
-                      :options="chartOptions" />
-    </div>
+    <clock class="clock"/>
+    <doughnut-chart class="doughnut-chart"
+                    title="PROGRESS"
+                    :data="classProgressChartData"
+                    :options="chartOptions" />
     <line-chart class="line-chart"
                 title="TIME TAKEN"
                 :data="questionsTimeTakenChartData"
@@ -61,7 +59,7 @@ export default {
         datasets: [
           {
             label: "Completed",
-            backgroundColor: ["#41c488", "#ff4d4f"],
+            backgroundColor: ["#54caff", "#ff5985"],
             data: [completed, incomplete]
           }
         ]
@@ -144,27 +142,22 @@ export default {
   height: 100%;
 }
 .statistics > div {
-  flex: 1;
   margin: 10px;
   color: #3eb5ff;
 }
-.top-row {
-  display: flex;
-}
 .clock {
-  flex: 2;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
   height: 100%;
   margin-right: 16px;
   text-align: center;
-  box-shadow: 0 2px 6px 1px #d5d8e2;
-  border-radius: 4px;
+  /*box-shadow: 0 2px 6px 1px #d5d8e2;*/
+  /*border-radius: 4px;*/
 }
 .doughnut-chart {
-  flex: 8;
+  flex: 3;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -174,6 +167,7 @@ export default {
   border-radius: 4px;
 }
 .line-chart {
+  flex: 6;
   box-shadow: 0 2px 6px 1px #d5d8e2;
   padding: 8px;
   border-radius: 4px;

@@ -1,15 +1,27 @@
 <template>
   <div class="main">
-    <div class="sider">
+    <a-modal
+      v-if="isMobileView && modalVisible"
+      :visible="modalVisible"
+      :footer="[]"
+      @cancel="modalVisible = false"
+    >
+      <sider/>
+    </a-modal>
+    <a-button v-if="isMobileView"
+              @click="modalVisible = true"
+              shape="circle"
+              icon="menu"
+              type="primary"
+              class="affix"/>
+    <div v-else class="sider">
       <sider/>
     </div>
-    <div class="content">
-      <div class="content-primary">
-        <statistics/>
-      </div>
-      <div class="content-secondary">
-        <students/>
-      </div>
+    <div class="content-primary">
+      <statistics/>
+    </div>
+    <div class="content-secondary">
+      <students/>
     </div>
   </div>
 </template>
@@ -20,6 +32,8 @@ import {
   Layout as ALayout,
   Row as ARow,
   Col as ACol,
+  Button as AButton,
+  Modal as AModal,
 } from 'ant-design-vue';
 import Sider from "../components/Sider";
 import Questions from "../components/Questions";
@@ -35,6 +49,8 @@ export default {
     Statistics,
     StatCard,
     ALayout,
+    AButton,
+    AModal,
     ALayoutSider: ALayout.Sider,
     ALayoutContent: ALayout.Content,
     ARow,
@@ -42,6 +58,15 @@ export default {
     Sider,
     Questions,
   },
+
+  data() {
+    return {
+      winResizeFn: null,
+      modalVisible: false,
+      isMobileView: window ? window.innerWidth < 1024 : true,
+    }
+  },
+
   beforeCreate() {
     // Init vuex store
     this.$axios.get(process.env.API_SYNC_STORES)
@@ -65,6 +90,16 @@ export default {
     })
   },
 
+  mounted() {
+    this.winResizeFn = window.addEventListener('resize', () => {
+      this.isMobileView = window.innerWidth < 1024;
+    });
+  },
+
+  destroyed() {
+    window.removeEventListener('resize', this.winResizeFn);
+  },
+
   computed: {
     notebooks() {
       return this.$store.state.NotebookStore;
@@ -74,8 +109,8 @@ export default {
     },
     selectedNotebook() {
       return this.$store.state.selectedNotebook;
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -87,12 +122,19 @@ export default {
   overflow: scroll;
 }
 
+.affix {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 2;
+  height: 50px; width: 50px;
+}
+
 .sider {
   width: 228px;
 }
 
 .content {
-  flex: 1;
   display: flex;
   padding: 16px 16px 16px 8px;
 }
@@ -101,12 +143,21 @@ export default {
   flex: 2;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow: scroll;
 }
 
 .content-secondary {
   flex: 1;
-  margin-left: 16px;
   overflow: scroll;
+  height: 100%;
+}
+
+@media (max-width: 1023px) {
+  .main {
+    flex-direction: column;
+    height: auto;
+  }
 }
 
 </style>

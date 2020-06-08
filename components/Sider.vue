@@ -77,43 +77,16 @@ export default {
     height: 100%;
   }
 
-  .notebooks {
-    display: flex;
-    flex-direction: column;
-    flex-basis: auto;
-    overflow: scroll;
-    height: 100%;
-  }
-
-  .notebook-container {
-    min-height: 30px;
-    position: relative;
-    padding: 5px;
-    margin: 10px;
-    box-shadow: 0 2px 6px 1px #d5d8e2;
-    border-radius: 4px;
-    overflow: hidden;
-    transition: all 0.4s;
-  }
-
-  .notebook-container:hover {
-    transform: translateX(5px);
-  }
-
-  .notebook-status-indicator {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    width: 7px;
-    background-color: #ff9ea0;
-    transition: background-color 0.2s;
-  }
-
   .upload {
     width: 100%;
     padding: 5px;
     margin-top: auto;
+  }
+
+  @media (max-width: 1023px) {
+    .brand {
+      display: none;
+    }
   }
 
 </style>

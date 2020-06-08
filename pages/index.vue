@@ -18,9 +18,20 @@
       <sider/>
     </div>
     <div class="content-primary">
+      <div class="lesson-info">
+        <h1>{{ selectedNotebook ? selectedNotebook.id : '' }}</h1>
+        <clock class="clock"/>
+      </div>
       <statistics/>
     </div>
-    <div class="content-secondary">
+    <div class="content-secondary"
+         :style="`flex: ${studentsVisible ? 1 : 0.02}`">
+      <a-button class="collapse-btn"
+                @click="studentsVisible = !studentsVisible"
+                :block="true"
+                style="background:#a4a8c6; border: 1px solid white;"
+                :icon="studentsVisible ? 'caret-right' : 'caret-left'"
+                type="primary"/>
       <students/>
     </div>
   </div>
@@ -37,7 +48,7 @@ import {
 } from 'ant-design-vue';
 import Sider from "../components/Sider";
 import Questions from "../components/Questions";
-import StatCard from "../components/StatCard";
+import Clock from "../components/Clock";
 import Statistics from "../components/Statistics";
 import ClassroomLayout from "../components/ClassroomLayout";
 import Students from "../components/Students";
@@ -46,8 +57,8 @@ export default {
   components: {
     Students,
     ClassroomLayout,
+    Clock,
     Statistics,
-    StatCard,
     ALayout,
     AButton,
     AModal,
@@ -63,6 +74,7 @@ export default {
     return {
       winResizeFn: null,
       modalVisible: false,
+      studentsVisible: true,
       isMobileView: window ? window.innerWidth < 1024 : true,
     }
   },
@@ -127,16 +139,12 @@ export default {
   bottom: 10px;
   right: 10px;
   z-index: 2;
-  height: 50px; width: 50px;
+  height: 50px;
+  width: 50px;
 }
 
 .sider {
   width: 228px;
-}
-
-.content {
-  display: flex;
-  padding: 16px 16px 16px 8px;
 }
 
 .content-primary {
@@ -145,12 +153,38 @@ export default {
   flex-direction: column;
   height: 100%;
   overflow: scroll;
+  padding-top: 8px;
+}
+
+.lesson-info {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.clock {
+  flex: 1;
+  height: 100%;
+  margin-left: 16px;
+  /*background-color: red;*/
 }
 
 .content-secondary {
+  position: relative;
   flex: 1;
   overflow: scroll;
   height: 100%;
+  transition: flex 0.3s;
+  padding-left: 5px;
+}
+
+.collapse-btn {
+  position: absolute;
+  left: 1px;
+  top: 50%;
+  width: 20px;
+  height: 50px;
+  z-index: 1;
 }
 
 @media (max-width: 1023px) {

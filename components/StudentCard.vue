@@ -12,7 +12,7 @@
       <div v-for="(attemptedQuestion, i) of attemptedQuestions"
            :key="student.id + '-AQ-' + i">
         <div class="progress-indicator">
-          <div class="question-id">{{ attemptedQuestion.questionId }}</div>
+          <div class="question-id">{{ attemptedQuestion.id }}</div>
           <a-progress class="progress-bar" :percent="attemptedQuestion.completeness" size="small"/>
           <div style="white-space: nowrap">
             {{ strftime(timeTaken(attemptedQuestion)) }}
@@ -51,8 +51,17 @@ export default {
   computed: {
 
     hasFinishedAllQuestions() {
-      for (const qn of this.attemptedQuestions) {
-        if (qn.completeness !== 100) {
+      const selectedNotebook = this.$store.state.selectedNotebook;
+      if (!selectedNotebook) {
+        return true;
+      }
+      for (const qnId of this.$store.state.selectedQuestions) {
+        const practice = this.student.progress[selectedNotebook.id];
+        if (!practice) {
+          return false;
+        }
+        const questionAttempt = practice[qnId];
+        if (!questionAttempt || questionAttempt.completeness !== 100) {
           return false;
         }
       }
@@ -92,7 +101,7 @@ export default {
     },
 
     secondsSince(timestamp) {
-      return dayjs().diff(dayjs(timestamp), 'seconds');
+      return dayjs().diff(dayjs(timestamp), 'second');
     },
 
     timeTaken(attemptedQuestion) {

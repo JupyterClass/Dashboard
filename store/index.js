@@ -38,6 +38,19 @@ export const mutations = {
     state.selectedQuestions = state.selectedQuestions.filter(id => id !== questionId);
   },
 
+  setQuestionColor(state, { question, color }) {
+    state.QuestionStore = {
+      ...state.QuestionStore,
+      [state.selectedNotebook.id]: {
+        ...(state.QuestionStore[state.selectedNotebook.id] || {}),
+        [question.id]: {
+          ...question,
+          color
+        }
+      }
+    };
+  },
+
   setQuestionIsLive(state, { question, startTime }) {
     state.QuestionStore = {
       ...state.QuestionStore,

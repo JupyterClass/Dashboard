@@ -1,6 +1,6 @@
-import { Line } from "vue-chartjs";
+import { Bar } from "vue-chartjs";
 export default {
-  extends: Line,
+  extends: Bar,
   name: "LineChart",
   props: ["title", "data", "options"],
   methods: {

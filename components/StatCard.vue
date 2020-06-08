@@ -2,10 +2,11 @@
   <div class="statcard">
     <a-icon class="icon" :type="icon" theme="twoTone" :twoToneColor="accentColor" />
     <div class="main-content">
-      <h1 class="title">{{ title }}</h1>
       <h1 class="stat">{{ stat }}</h1>
+      <h1 class="title">{{ title }}</h1>
     </div>
-    <div class="statcard-accent" :style="{backgroundColor: accentColor}"/>
+    <div class="statcard-accent"
+         :style="`backgroundColor: ${accentColor}; ${accentPosition || 'left'}: 0`"/>
   </div>
 </template>
 
@@ -14,7 +15,7 @@ import { Icon as AIcon } from 'ant-design-vue';
 export default {
   name: "StatCard",
   components: { AIcon },
-  props: ['accentColor', 'title', 'stat', 'icon']
+  props: ['accentColor', 'title', 'stat', 'icon', 'accentPosition']
 };
 </script>
 

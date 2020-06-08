@@ -50,12 +50,20 @@ export default {
       const studentsCompleted = [];
       const studentsInProgress = [];
 
+      const selectedNotebook = this.$store.state.selectedNotebook;
       for (const student of students) {
-        const attemptedQuestions = this.getStudentAttemptedQuestions(student);
         let isStudentDone = true;
-        for (const qn of attemptedQuestions) {
-          if (qn.completeness !== 100) {
+        for (const qnId of this.$store.state.selectedQuestions) {
+          const practice = student.progress[selectedNotebook.id];
+          console.log(practice);
+          if (!practice) {
             isStudentDone = false;
+            break;
+          }
+          const question = practice[qnId];
+          if (!question || question.completeness !== 100) {
+            isStudentDone = false;
+            break;
           }
         }
         if (isStudentDone) {
@@ -84,7 +92,13 @@ export default {
 
   methods: {
     getStudentAttemptedQuestions(student) {
-      let attemptedQuestions = [];
+      let attemptedQuestions = {};
+      for (const qnId of this.$store.state.selectedQuestions) {
+        attemptedQuestions[qnId] = {
+          id: qnId,
+          completeness: 0,
+        };
+      }
 
       if (!this.$store.state.selectedNotebook) {
         return attemptedQuestions;
@@ -100,17 +114,18 @@ export default {
 
       for (const [questionId, completeness] of Object.entries(notebookProgress)) {
         if (this.$store.state.selectedQuestions.indexOf(questionId) !== -1) {
-          attemptedQuestions.push({ questionId, ...completeness });
+          attemptedQuestions[questionId] = {
+            ...attemptedQuestions[questionId],
+            ...completeness
+          };
         }
       }
 
-      attemptedQuestions.sort((a, b) => {
+      return Object.values(attemptedQuestions).sort((a, b) => {
         if (a.questionId < b.questionId) return -1;
         if (a.questionId > b.questionId) return 1;
         return 0;
       });
-
-      return attemptedQuestions;
     },
     handleKickAll() {
       // TODO:
@@ -137,9 +152,6 @@ export default {
   justify-content: flex-start;
   flex-wrap: wrap;
   padding: 12px;
-}
-.search {
-  padding: 8px;
 }
 .header {
   position: sticky;

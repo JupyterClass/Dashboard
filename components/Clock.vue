@@ -12,7 +12,7 @@ export default {
   data() {
     return {
       intervalFn: null,
-      currentTime: dayjs(Date.now()).format('hh:mm:ss a'),
+      currentTime: dayjs(Date.now()).format('HH:mm:ss'),
     }
   },
   mounted() {
@@ -27,5 +27,9 @@ export default {
 .clock-text {
   font-size: 3.2vmax;
   color: #8993a9;
+  background-color: #e8f0ff;
+  box-shadow: inset 4px 4px 8px #c3c5e6, inset -4px -4px 8px #ffffff;
+  border-radius: 500px;
+  padding: 2px 5% 2px 5%;
 }
 </style>

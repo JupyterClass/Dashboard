@@ -54,7 +54,7 @@ export default {
     try {
       let { fileName, contents: notebook } = await getFileUploadContents(req, { ext: '.ipynb' });
       notebook = {
-        id: fileName,
+        id: fileName.replace('.ipynb', ''),
         data: JSON.parse(notebook)
       };
 

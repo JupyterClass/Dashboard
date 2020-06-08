@@ -81,6 +81,8 @@ export default {
     width: 100%;
     padding: 5px;
     margin-top: auto;
+    box-shadow: -2px -4px 8px 2px #adafc4;
+    z-index: 1;
   }
 
   @media (max-width: 1023px) {

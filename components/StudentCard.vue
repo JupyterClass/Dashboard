@@ -42,6 +42,10 @@ export default {
     }
   },
 
+  mounted() {
+    this.visible = !this.hasFinishedAllQuestions;
+  },
+
   computed: {
 
     hasFinishedAllQuestions() {
@@ -113,7 +117,7 @@ export default {
       }
       return Math.round(timeInSeconds / 60) + ' mins';
     }
-  }
+  },
 };
 </script>
 

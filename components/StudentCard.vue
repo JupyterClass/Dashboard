@@ -1,12 +1,9 @@
 <template>
-  <div class="student-card">
+  <div class="student-card" @click="visible = !visible">
     <div class="student-profile">
       <h3>{{ student.id }}</h3>
-<!--      <div>-->
-<!--        <a-icon type="dashboard"/> {{ attemptSpeed }}-->
-<!--      </div>-->
     </div>
-    <div class="progress">
+    <div v-if="visible" class="progress">
       <div v-for="(attemptedQuestion, i) of attemptedQuestions"
            :key="student.id + '-AQ-' + i">
         <div class="progress-indicator">
@@ -21,6 +18,8 @@
         {{ lastAttemptMinsAgo }}
       </div>
     </div>
+    <accent :color="hasFinishedAllQuestions ? '#45b1ff' : '#ff6388'"
+            alignment="left"/>
   </div>
 </template>
 
@@ -30,43 +29,28 @@ import {
   Icon as AIcon,
   Progress as AProgress,
 } from 'ant-design-vue';
+import Accent from "./Accent";
+
 export default {
   name: "StudentCard",
-  props: ['student'],
-  components: { AIcon, AProgress },
+  props: ['student', 'attemptedQuestions'],
+  components: { AIcon, AProgress, Accent },
+
+  data() {
+    return {
+      visible: true,
+    }
+  },
 
   computed: {
-    attemptedQuestions() {
 
-      console.log('EXPENSIVE COMPUTATION');
-
-      let attemptedQuestions = [];
-
-      if (!this.$store.state.selectedNotebook) {
-        return attemptedQuestions;
-      }
-
-      const notebookProgress = this.$store.state
-        .StudentStore[this.student.id]
-        .progress[this.$store.state.selectedNotebook.id];
-
-      if (!notebookProgress) {
-        return attemptedQuestions;
-      }
-
-      for (const [questionId, completeness] of Object.entries(notebookProgress)) {
-        if (this.$store.state.selectedQuestions.indexOf(questionId) !== -1) {
-          attemptedQuestions.push({ questionId, ...completeness });
+    hasFinishedAllQuestions() {
+      for (const qn of this.attemptedQuestions) {
+        if (qn.completeness !== 100) {
+          return false;
         }
       }
-
-      attemptedQuestions.sort((a, b) => {
-        if (a.questionId < b.questionId) return -1;
-        if (a.questionId > b.questionId) return 1;
-        return 0;
-      });
-
-      return attemptedQuestions;
+      return true;
     },
 
     lastAttemptMinsAgo() {
@@ -135,20 +119,23 @@ export default {
 
 <style scoped>
 .student-card {
+  position: relative;
   display: flex;
   align-items: center;
   background-color: white;
   box-shadow: 0 2px 6px 1px #d5d8e2;
-  padding: 8px;
+  padding: 8px 8px 8px 14px;
   margin: 8px;
   border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
 }
 .student-profile {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-width: 100px;
+  min-width: 80px;
   border-radius: 4px;
   margin-right: 8px;
 }
@@ -164,7 +151,7 @@ export default {
   margin-right: 8px;
 }
 .progress-indicator .progress-bar {
-  min-width: 100px;
+  min-width: 70px;
 }
 .timestamp {
   text-align: right;

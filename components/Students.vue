@@ -1,5 +1,5 @@
 <template>
-  <div class="students">
+  <div>
     <div class="header">
       <h1>Students</h1>
       <div>
@@ -9,9 +9,18 @@
 <!--        Kick All-->
 <!--      </a-button>-->
     </div>
-    <student-card v-for="(student, i) in students"
-                  :key="'student-' + i"
-                  :student="student"/>
+    <div class="students-in-progress">
+      <student-card v-for="(student, i) in students.studentsInProgress"
+                    :key="student.id"
+                    :student="student"
+                    :attempted-questions="getStudentAttemptedQuestions(student)"/>
+    </div>
+    <div class="students-done">
+      <student-card v-for="(student, i) in students.studentsCompleted"
+                    :key="student.id"
+                    :student="student"
+                    :attempted-questions="getStudentAttemptedQuestions(student)"/>
+    </div>
   </div>
 </template>
 
@@ -33,10 +42,31 @@ export default {
     AButton,
     StudentCard,
   },
+
   computed: {
     students() {
-      return Object.values(this.$store.state.StudentStore) || [];
+      const students = Object.values(this.$store.state.StudentStore);
+
+      const studentsCompleted = [];
+      const studentsInProgress = [];
+
+      for (const student of students) {
+        const attemptedQuestions = this.getStudentAttemptedQuestions(student);
+        let isStudentDone = true;
+        for (const qn of attemptedQuestions) {
+          if (qn.completeness !== 100) {
+            isStudentDone = false;
+          }
+        }
+        if (isStudentDone) {
+          studentsCompleted.push(student);
+        } else {
+          studentsInProgress.push(student);
+        }
+      }
+      return { studentsInProgress, studentsCompleted };
     },
+
     questions() {
       if (!this.$store.state.selectedNotebook) {
         return [];
@@ -51,7 +81,37 @@ export default {
       return [...this.$store.state.selectedQuestions];
     }
   },
+
   methods: {
+    getStudentAttemptedQuestions(student) {
+      let attemptedQuestions = [];
+
+      if (!this.$store.state.selectedNotebook) {
+        return attemptedQuestions;
+      }
+
+      const notebookProgress = this.$store.state
+        .StudentStore[student.id]
+        .progress[this.$store.state.selectedNotebook.id];
+
+      if (!notebookProgress) {
+        return attemptedQuestions;
+      }
+
+      for (const [questionId, completeness] of Object.entries(notebookProgress)) {
+        if (this.$store.state.selectedQuestions.indexOf(questionId) !== -1) {
+          attemptedQuestions.push({ questionId, ...completeness });
+        }
+      }
+
+      attemptedQuestions.sort((a, b) => {
+        if (a.questionId < b.questionId) return -1;
+        if (a.questionId > b.questionId) return 1;
+        return 0;
+      });
+
+      return attemptedQuestions;
+    },
     handleKickAll() {
       // TODO:
       //  1. are you sure?
@@ -62,9 +122,17 @@ export default {
 </script>
 
 <style scoped>
-.students {
+.students-in-progress {
+  display: flex;
+  flex-direction: column;
   padding: 20px;
   height: 100%;
+}
+.students-done {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  padding: 20px;
 }
 .search {
   padding: 8px;
@@ -73,5 +141,10 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+.header > h1 {
+  text-transform: uppercase;
+  font-size: 1.8em;
+  letter-spacing: 3px;
 }
 </style>

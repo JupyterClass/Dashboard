@@ -50,7 +50,8 @@ export function saveQuestion(practiceId, question) {
 }
 
 export function getQuestion(practiceId, questionId) {
-  return QuestionStore[practiceId][questionId];
+  const practice = QuestionStore[practiceId];
+  return practice ? practice[questionId] : null;
 }
 
 export function getAllQuestions() {

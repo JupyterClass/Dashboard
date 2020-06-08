@@ -1,25 +1,32 @@
 <template>
   <div class="statistics">
-    <accent-card title="CLASS PROGRESS">
-      <doughnut-chart :data="classProgressChartData" :options="chartOptions" />
-    </accent-card>
-    <accent-card title="TIME TAKEN">
-      <bar-chart :data="questionsTimeTakenChartData" :options="chartOptions" />
-    </accent-card>
+    <div class="top-row">
+      <clock class="clock"/>
+      <doughnut-chart class="doughnut-chart"
+                      title="PROGRESS"
+                      :data="classProgressChartData"
+                      :options="chartOptions" />
+    </div>
+    <line-chart class="line-chart"
+                title="TIME TAKEN"
+                :data="questionsTimeTakenChartData"
+                :options="chartOptions" />
   </div>
 </template>
 
 <script>
-import AccentCard from "./charts/AccentCard";
 import DoughnutChart from "./charts/DoughnutChart";
-import BarChart from "./charts/BarChart";
+import LineChart from "./charts/LineChart";
+import Clock from "./Clock";
 export default {
   name: "Statistics",
-  components: { BarChart, AccentCard, DoughnutChart },
+  components: { Clock, LineChart, DoughnutChart },
   data() {
     return {
       chartOptions: {
-        hoverBorderWidth: 20
+        animation: false,
+        responsive: true,
+        maintainAspectRatio: false,
       },
     };
   },
@@ -71,8 +78,9 @@ export default {
       }
 
       const questionDurations = {};
-      let minDuration = 100000; // minutes
-      let maxDuration = -100000; // minutes
+      let minDuration = 1000; // minutes;
+      let maxDuration = -1; // minutes
+
       for (const student of Object.values(students)) {
         const studentAttemptedQuestions = student.progress[selectedNotebook.id];
 
@@ -90,10 +98,8 @@ export default {
             ); // secs
 
             if (!(question.id in questionDurations)) {
-              // questionDurations[question.id] = Array(20).fill(0);
               questionDurations[question.id] = [];
             }
-            // questionDurations[question.id][duration]++;
             questionDurations[question.id].push(duration);
             minDuration = Math.min(minDuration, duration);
             maxDuration = Math.max(maxDuration, duration);
@@ -101,18 +107,17 @@ export default {
         }
       }
 
+      minDuration = Math.max(minDuration, 0);
       maxDuration = Math.max(maxDuration, minDuration + 10);
 
       const labels = []; // Minimum 10 intervals of 60 secs
       for (let i = minDuration; i <= maxDuration; i++) {
         labels.push(i);
       }
-
-      const numIntervals = maxDuration - minDuration;
+      const numIntervals = (maxDuration - minDuration) || 10;
       const datasets = [];
       for (const questionId in questionDurations) {
-        const bins = Array(numIntervals).fill(0);
-        console.log(bins);
+        const bins = Array(numIntervals + 1).fill(0);
         for (const duration of questionDurations[questionId]) {
           bins[duration]++;
         }
@@ -135,14 +140,40 @@ export default {
 <style scoped>
 .statistics {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  height: 100%;
 }
 .statistics > div {
   flex: 1;
   margin: 10px;
   color: #3eb5ff;
 }
-.pie-chart {
+.top-row {
+  display: flex;
+}
+.clock {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  margin-right: 16px;
+  text-align: center;
+  box-shadow: 0 2px 6px 1px #d5d8e2;
+  border-radius: 4px;
+}
+.doughnut-chart {
+  flex: 8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  box-shadow: 0 2px 6px 1px #d5d8e2;
+  padding: 8px;
+  border-radius: 4px;
+}
+.line-chart {
   box-shadow: 0 2px 6px 1px #d5d8e2;
   padding: 8px;
   border-radius: 4px;

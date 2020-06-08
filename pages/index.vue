@@ -106,11 +106,7 @@ export default {
 .content-secondary {
   flex: 1;
   margin-left: 16px;
-}
-
-.classroom-layout-wrapper {
-  flex: 1;
-  padding-top: 16px;
+  overflow: scroll;
 }
 
 </style>

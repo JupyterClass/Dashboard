@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="students">
     <div class="header">
       <h1>Students</h1>
       <div>
@@ -122,25 +122,37 @@ export default {
 </script>
 
 <style scoped>
+.students {
+  position: relative;
+  background-color: #e6e9f4;
+  border-radius: 10px;
+}
 .students-in-progress {
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  height: 100%;
+  padding: 12px;
 }
 .students-done {
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
-  padding: 20px;
+  padding: 12px;
 }
 .search {
   padding: 8px;
 }
 .header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: #e6e9f4;
+  z-index: 1;
+  box-shadow: 0 8px 4px -4px #bbc1d5;
 }
 .header > h1 {
   text-transform: uppercase;

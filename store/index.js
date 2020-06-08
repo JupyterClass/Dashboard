@@ -31,7 +31,9 @@ export const mutations = {
   },
 
   setSelectedQuestion(state, questionId) {
-    state.selectedQuestions = [questionId, ...state.selectedQuestions];
+    if (state.selectedQuestions.indexOf(questionId) === -1) {
+      state.selectedQuestions = [questionId, ...state.selectedQuestions];
+    }
   },
 
   unsetSelectedQuestion(state, questionId) {

@@ -22,8 +22,15 @@ export function duplicateStudentIdError() {
 }
 
 export function nonexistentPracticeError() {
-  JSON.stringify({
+  return JSON.stringify({
     status,
     msg: "Tried to join a practice session that doesn't exist!"
+  });
+}
+
+export function nonexistentQuestionError() {
+  return JSON.stringify({
+    status,
+    msg: "Submitted output to a question that doesn't exist!"
   });
 }

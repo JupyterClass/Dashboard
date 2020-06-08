@@ -12,7 +12,8 @@ import {
   duplicateStudentIdError,
   invalidEndpoint,
   invalidPayloadError,
-  nonexistentPracticeError
+  nonexistentPracticeError,
+  nonexistentQuestionError
 } from "./response/error";
 import {
   joinedSessionSuccess
@@ -91,10 +92,20 @@ export default {
       questionId = questionId.toString();
 
       if (!getStudent(studentId)) {
-        saveStudent(studentId); // Anything wrong with this?
+        if (getNotebook(practiceId)) {
+          // practice session exists
+          saveStudent(studentId);
+        }
       }
 
-      const expectedOutput = getQuestion(practiceId, questionId).expected;
+      const question = getQuestion(practiceId, questionId);
+
+      if (!question) {
+        res.end(nonexistentQuestionError());
+        return;
+      }
+
+      const expectedOutput = question.expected;
 
       const evaluation = evaluate(output, expectedOutput);
 

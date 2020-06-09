@@ -11,10 +11,14 @@ export default function () {
     io = socketIO(server);
 
     // overwrite nuxt.server.listen()
-    this.nuxt.server.listen = (port, host) =>
-      new Promise(resolve =>
-        server.listen(port || 3000, host || 'localhost', resolve)
+    this.nuxt.server.listen = (port, host) => {
+      port = process.env.PORT || port || 3000;
+      host = process.env.HOST || host || 'localhost';
+      console.log(`Listening on ${host}:${port}`);
+      return new Promise(resolve =>
+        server.listen(port, host, resolve)
       );
+    }
 
     // close this server on 'close' event
     this.nuxt.hook('close', () => new Promise(server.close));

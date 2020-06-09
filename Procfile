@@ -1,1 +1,1 @@
-web: nuxt start
+web: echo "PORT = $PORT" && nuxt start

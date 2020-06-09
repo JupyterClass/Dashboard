@@ -79,9 +79,10 @@ export default {
 
   .upload {
     width: 100%;
-    padding: 5px;
+    padding: 8px;
     margin-top: auto;
-    box-shadow: -2px -4px 8px 2px #adafc4;
+    box-shadow: inset 0 0 8px #adafc4;
+    border-radius: 8px;
     z-index: 1;
   }
 

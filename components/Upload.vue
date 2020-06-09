@@ -34,14 +34,14 @@ export default {
 
   methods: {
     handleChange(info) {
-      const status = info.file.status;
-      // if (status !== 'uploading') {
-      //   console.log(info.file, info.fileList);
-      // }
-      if (status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
+      const response = info.file.response;
+      if (response) {
+        const { status, msg } = response;
+        if (status === 'success') {
+          message.success(`${info.file.name} file uploaded successfully.`);
+        } else if (status === 'error') {
+          message.error(`${msg}`);
+        }
       }
     },
     beforeUpload(file) {

@@ -6,9 +6,13 @@ import {
   QuestionStore,
   getAllQuestions,
   saveNotebook,
-  saveNotebookQuestions, getQuestion, getNotebook
+  saveNotebookQuestions,
+  getQuestion,
+  getNotebook,
+  deleteNotebook
 } from "./store/question";
 import {
+  error,
   duplicateStudentIdError,
   invalidEndpoint,
   invalidPayloadError,
@@ -16,9 +20,23 @@ import {
   nonexistentQuestionError
 } from "./response/error";
 import {
-  joinedSessionSuccess
+  joinedSessionSuccess,
+  uploadNotebookSuccess
 } from "./response/success";
-import { getStudent, saveStudent, setStudentProgress, StudentStore } from "./store/student";
+import {
+  getStudent,
+  saveStudent,
+  setStudentProgress,
+  StudentStore,
+  deletePracticeProgress,
+} from "./store/student";
+import { isValidEvalPayload } from "./evaluate/validation";
+import { verifyMetadata } from "./notebook/metadata";
+
+export const unprotected = [
+  // Not protected by auth module
+  '/join', // -> students will get jwt from here
+]
 
 export default {
 
@@ -61,21 +79,30 @@ export default {
       try {
         verifyMetadata(notebook.data);
       } catch(err) {
-        res.statusCode = 400;
-        res.statusMessage = err;
-        res.end();
+        console.log(`/upload: Rejecting notebook "${notebook.id}" - ${err}`);
+        res.end(error(err.toString()));
         return;
       }
 
       saveNotebook(notebook);
       saveNotebookQuestions(notebook);
 
+      const expiry = notebook.data.metadata['JupyterClass']['expiry'];
+      if (expiry) {
+        const timeToDelete = Number(new Date(expiry)) - Date.now();
+        setTimeout(() => {
+          deleteNotebook(notebook.id);
+          deletePracticeProgress(notebook.id);
+        }, timeToDelete)
+        console.log(`/upload: Deletion of ${notebook.id} on ${new Date(timeToDelete)} queued`);
+      }
+
     } catch (err) {
-      console.error(err);
-      res.statusCode = 400;
-      res.statusMessage = err;
+      console.error('/upload: Unexpected error - ' + err);
+      res.end(error(err.toString()))
+      return;
     }
-    res.end();
+    res.end(uploadNotebookSuccess());
   },
 
   '/evaluate': async (req, res) => {
@@ -87,7 +114,7 @@ export default {
       return;
     }
 
-    if (isValidPayload(payload)) {
+    if (isValidEvalPayload(payload)) {
       let { studentId, practiceId, questionId, output } = payload;
       questionId = questionId.toString();
 
@@ -138,45 +165,3 @@ export default {
     res.end(JSON.stringify({ hello: 'world!' }));
   },
 };
-
-function isValidPayload(payload) {
-  return (
-    payload &&
-    'studentId' in payload &&
-    'practiceId' in payload &&
-    'questionId' in payload &&
-    'output' in payload
-  )
-}
-
-function verifyMetadata(notebook) {
-  if (!('JupyterClass' in notebook['metadata'])) {
-    throw Error(`Missing JupyterClass configs. Ensure that the notebook metadata contains a 'JupyterClass' key...`);
-  }
-  const { metadata } = notebook;
-  if (
-    !('practiceId' in metadata['JupyterClass']) ||
-    !('studentId' in metadata['JupyterClass'])
-  ) {
-    throw Error(`Invalid JupyterClass config. 'practiceId' and 'studentId' keys expected.`);
-  }
-
-  const invalidCells = [];
-  for (const cell of notebook.cells) {
-    if (
-      cell['cell_type'] === 'code' &&
-      'Question' in cell['metadata']
-    ) {
-      const questionCell = cell['metadata']['Question'];
-      if (!('expected' in questionCell)) {
-        invalidCells.push(questionCell);
-      }
-    }
-  }
-
-  if (invalidCells.length > 0) {
-    throw Error(`
-      Invalid cells: ${JSON.stringify(invalidCells)}
-    `);
-  }
-}

@@ -6,3 +6,10 @@ export function joinedSessionSuccess() {
     msg: 'Joined session successfully!'
   });
 }
+
+export function uploadNotebookSuccess() {
+  return JSON.stringify({
+    status,
+    msg: 'Notebook uploaded'
+  });
+}

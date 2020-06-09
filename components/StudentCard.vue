@@ -130,7 +130,7 @@ export default {
       if (timeInSeconds <= 60) {
         return Math.round(timeInSeconds) + 's';
       }
-      return Math.round(timeInSeconds / 60) + 'm';
+      return Math.floor(timeInSeconds / 60) + 'm';
     }
   },
 };

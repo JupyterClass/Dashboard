@@ -55,7 +55,6 @@ export default {
         let isStudentDone = true;
         for (const qnId of this.$store.state.selectedQuestions) {
           const practice = student.progress[selectedNotebook.id];
-          console.log(practice);
           if (!practice) {
             isStudentDone = false;
             break;
@@ -140,6 +139,7 @@ export default {
 .students {
   position: relative;
   background-color: #e6e9f4;
+  box-shadow: inset 2px 0 8px #bbc1d5;
   min-height: 100%;
 }
 .students-in-progress {

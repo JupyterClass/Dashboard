@@ -1,5 +1,8 @@
 import { invalidEndpoint } from "./response/error";
-import endpoints from "./endpoints";
+import endpoints, { unprotected } from "./endpoints";
+import auth from "./auth";
+
+const publicEndpoints = new Set(unprotected);
 
 export default function (req, res, next) {
 
@@ -10,13 +13,22 @@ export default function (req, res, next) {
     return;
   }
 
+
   // Registering our endpoints
   for (const endpoint in endpoints) {
     if (req.url.endsWith(endpoint)) {
-      const handler = endpoints[endpoint];
-      res.setHeader('Content-Type', 'application/json'); // Applies to all endpoints
-      handler(req, res, next);
-      return;
+
+      let isAuthenticated = true;
+      if (!publicEndpoints.has(endpoint)) {
+        isAuthenticated = auth(req, res);
+      }
+
+      if (isAuthenticated) {
+        const handler = endpoints[endpoint];
+        res.setHeader('Content-Type', 'application/json'); // Applies to all endpoints
+        handler(req, res, next);
+        return;
+      }
     }
   }
   // If client requests for some nonsense endpoint

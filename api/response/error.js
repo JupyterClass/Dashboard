@@ -1,5 +1,12 @@
 const status = 'error';
 
+export function error(msg) {
+  return JSON.stringify({
+    status,
+    msg
+  });
+}
+
 export function invalidPayloadError() {
   return JSON.stringify({
     status,

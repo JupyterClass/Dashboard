@@ -69,3 +69,9 @@ export function setStudentProgress({
 
   pushStudentsState();
 }
+
+export function deletePracticeProgress(practiceId) {
+  for (const studentId in StudentStore) {
+    delete StudentStore[studentId].progress[practiceId];
+  }
+}

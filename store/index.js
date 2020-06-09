@@ -1,3 +1,6 @@
+import websocketSyncPlugin from "./websocketSyncPlugin";
+export const plugins = [ websocketSyncPlugin ];
+
 export const state = () => ({
   NotebookStore: {},
   QuestionStore: {},
@@ -6,6 +9,7 @@ export const state = () => ({
   selectedNotebook: null,
   selectedQuestions: [],
 });
+
 
 export const mutations = {
   syncStore(state, { NotebookStore, QuestionStore, StudentStore }) {

@@ -16,6 +16,15 @@ export function saveNotebook(notebook) {
   NotebookStore[notebook.id] = notebook;
 }
 
+export function deleteNotebook(notebookId) {
+  // Any potential memory leaks here? I'm assuming the garbage collector
+  // will do its thang.. :3
+
+  delete NotebookStore[notebookId];
+  // Cascade and related questions
+  delete QuestionStore[notebookId];
+}
+
 export function saveNotebookQuestions(notebook) {
   for (const cell of notebook.data.cells) {
     if (

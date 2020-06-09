@@ -81,9 +81,12 @@ export default {
 
   beforeCreate() {
     // Init vuex store
+    console.log('API_SYNC_STORES: ', process.env.API_SYNC_STORES);
     this.$axios.get(process.env.API_SYNC_STORES)
       .then(response => {
+        console.log('response => ', response);
         this.$store.commit('syncStore', response.data);
+        console.log('response.data => ', response.data);
         this.$store.commit('setSelectedNotebook', Object.values(this.notebooks)[0]);
         this.$store.commit('setSelectedQuestions',
           Object.values(this.questions[this.selectedNotebook.id]).map(qn => qn.id)

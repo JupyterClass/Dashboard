@@ -1,4 +1,8 @@
 
+const baseUrl = (process.env.HOST && process.env.PORT)
+  ? (process.env.HOST + ':' + process.env.PORT)
+  : 'http://localhost:3000';
+
 export default {
   mode: 'spa',
   /*
@@ -68,5 +72,8 @@ export default {
 
   serverMiddleware: [
     { path: '/api', handler: '~/api/index.js' }
-  ]
+  ],
+  env: {
+    baseUrl
+  }
 }

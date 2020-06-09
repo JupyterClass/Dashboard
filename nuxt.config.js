@@ -4,6 +4,8 @@ const baseUrl = (process.env.HOST && process.env.PORT)
   ? (process.env.HOST + ':' + process.env.PORT)
   : 'http://localhost:3000';
 
+console.log('🚀 BASE URL', baseUrl);
+
 export default {
   mode: 'spa',
   /*
@@ -54,6 +56,7 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
+    baseURL: baseUrl
   },
   /*
   ** Build configuration

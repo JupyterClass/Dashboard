@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '.env' });
 
 const baseUrl = (process.env.HOST && process.env.PORT)
   ? (process.env.HOST + ':' + process.env.PORT)

@@ -2,7 +2,7 @@ const REQUIRED_FIELDS = [
   'practiceId',
   'studentId',
   'server',
-  'token',
+  'sessionPwd',
 ]
 
 export function verifyMetadata(notebook) {
@@ -46,6 +46,10 @@ export function verifyMetadata(notebook) {
     throw Error(`
       Invalid cells: ${JSON.stringify(invalidCells)}
     `);
+  }
+
+  return {
+
   }
 }
 

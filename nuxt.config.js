@@ -47,10 +47,14 @@ export default {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    '@nuxtjs/auth',
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
     '~/api/websocket',
   ],
+  router: {
+    middleware: ['auth']
+  },
   /*
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
@@ -71,12 +75,31 @@ export default {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
+    },
+
+    build: {
+      transpile: ['@nuxtjs/auth']
+    }
+  },
+
+  auth: {
+    strategies: {
+      customStrategy: {
+        _scheme: '~/schemes/customScheme',
+        endpoints: {
+          login: { url: '/api/auth/login', method: 'post', propertyName: 'token' }
+        },
+        tokenRequired: true,
+        tokenType: 'bearer',
+        globalToken: true,
+      }
     }
   },
 
   serverMiddleware: [
     { path: '/api', handler: '~/api/index.js' }
   ],
+
   env: {
     baseUrl
   }

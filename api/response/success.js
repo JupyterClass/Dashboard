@@ -1,9 +1,10 @@
 const status = 'success';
 
-export function joinedSessionSuccess() {
+export function joinedSessionSuccess(token) {
   return JSON.stringify({
     status,
-    msg: 'Joined session successfully!'
+    msg: 'Joined session successfully!',
+    token,
   });
 }
 

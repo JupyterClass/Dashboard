@@ -13,9 +13,9 @@ export const state = () => ({
 
 export const mutations = {
   syncStore(state, { NotebookStore, QuestionStore, StudentStore }) {
-    state.NotebookStore = NotebookStore;
-    state.QuestionStore = QuestionStore;
-    state.StudentStore = StudentStore;
+    state.NotebookStore = NotebookStore || {};
+    state.QuestionStore = QuestionStore || {};
+    state.StudentStore = StudentStore || {};
   },
 
   syncQuestions(state, { QuestionStore }) {

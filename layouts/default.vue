@@ -46,4 +46,13 @@ h4 {
   }
 }
 
+@keyframes glow-shadow {
+  from {
+    box-shadow: 0px 0px 20px 10px hsl(218, 100%, 92%);
+  }
+  to {
+    box-shadow: 0px 0px 20px 5px hsl(0, 73%, 90%);
+  }
+}
+
 </style>

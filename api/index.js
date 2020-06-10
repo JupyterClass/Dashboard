@@ -4,7 +4,7 @@ import auth from "./auth";
 
 const publicEndpoints = new Set(unprotected);
 
-export default function (req, res, next) {
+export default async function (req, res, next) {
 
   addCorsHeaders(req, res);
   if (req.method === 'OPTIONS') {
@@ -13,20 +13,22 @@ export default function (req, res, next) {
     return;
   }
 
+  let user = null;
+  if (!publicEndpoints.has(req.url)) {
+    // Is protected route
+     user = await auth(req, res);
+     if (!user) {
+       return;
+     }
+  }
 
   // Registering our endpoints
   for (const endpoint in endpoints) {
     if (req.url.endsWith(endpoint)) {
-
-      let isAuthenticated = true;
-      if (!publicEndpoints.has(endpoint)) {
-        isAuthenticated = auth(req, res);
-      }
-
-      if (isAuthenticated) {
+      if (user || publicEndpoints.has(endpoint)) {
         const handler = endpoints[endpoint];
         res.setHeader('Content-Type', 'application/json'); // Applies to all endpoints
-        handler(req, res, next);
+        handler(req, res, user);
         return;
       }
     }

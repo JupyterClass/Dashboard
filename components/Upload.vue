@@ -3,8 +3,8 @@
     name="file"
     :multiple="true"
     :showUploadList="false"
-    :beforeUpload="beforeUpload"
     action="/api/upload"
+    :headers="headers"
     @change="handleChange"
   >
     <div class="upload-inner-content">
@@ -32,6 +32,14 @@ export default {
     AIcon,
   },
 
+  computed: {
+    headers() {
+      return {
+        authorization: this.$auth.getToken('customStrategy'),
+      }
+    }
+  },
+
   methods: {
     handleChange(info) {
       const response = info.file.response;
@@ -43,9 +51,6 @@ export default {
           message.error(`${msg}`);
         }
       }
-    },
-    beforeUpload(file) {
-      return true;
     },
   }
 };

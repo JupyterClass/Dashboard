@@ -7,6 +7,13 @@ export function error(msg) {
   });
 }
 
+export function unauthorizedError() {
+  return JSON.stringify({
+    status,
+    msg: 'Unauthorized'
+  })
+}
+
 export function invalidPayloadError() {
   return JSON.stringify({
     status,

@@ -43,11 +43,11 @@ const handlers = {
           token: createJwt.teamMember({}, SECRET)
         }));
       } else {
-        res.statusCode = 402;
+        res.statusCode = 401;
         res.end(unauthorizedError());
       }
     } catch (err) {
-      res.statusCode = 402;
+      res.statusCode = 401;
       console.log('AUTH: invalid login request');
       res.end(unauthorizedError());
     }
@@ -65,6 +65,7 @@ const handlers = {
 
     } catch (err) {
       console.log('AUTH: Invalid token -> ' + err);
+      res.statusCode = 401;
       res.end(unauthorizedError());
       return false;
     }

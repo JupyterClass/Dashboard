@@ -21,16 +21,14 @@ export default async function (req, res, next) {
        return;
      }
   }
-
+  
   // Registering our endpoints
   for (const endpoint in endpoints) {
-    if (req.url.endsWith(endpoint)) {
-      if (user || publicEndpoints.has(endpoint)) {
-        const handler = endpoints[endpoint];
-        res.setHeader('Content-Type', 'application/json'); // Applies to all endpoints
-        handler(req, res, user);
-        return;
-      }
+    if (req.url.startsWith(endpoint)) {
+      const handler = endpoints[endpoint];
+      res.setHeader('Content-Type', 'application/json'); // Applies to all endpoints
+      handler(req, res, user);
+      return;
     }
   }
   // If client requests for some nonsense endpoint

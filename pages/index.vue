@@ -81,7 +81,6 @@ export default {
 
   beforeCreate() {
     // Init vuex store
-    console.log('API_SYNC_STORES: ', process.env.API_SYNC_STORES);
     this.$axios.get('/api/sync-stores')
       .then(response => {
         console.log('response => ', response);

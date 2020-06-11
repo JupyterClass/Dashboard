@@ -1,10 +1,17 @@
-require('dotenv').config({ path: '.env' });
+import dotenv from "dotenv";
+dotenv.config();
 
-const baseUrl = (process.env.HOST && process.env.PORT)
-  ? (process.env.HOST + ':' + process.env.PORT)
-  : 'http://localhost:3000';
-
-console.log('🚀 BASE URL', baseUrl);
+const REQUIRED_ENV_VARS = [
+  'BASE_URL',
+  'SECRET',
+  'DASHBOARD_PASSWORD',
+];
+const missingRequiredVars = REQUIRED_ENV_VARS.filter(envVar =>
+  typeof process.env[envVar] === 'undefined'
+);
+if (missingRequiredVars.length > 0) {
+  throw Error(`Missing required environment variables: [ ${missingRequiredVars} ]`);
+}
 
 export default {
   mode: 'spa',
@@ -60,7 +67,7 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: baseUrl.startsWith('http') ? baseUrl : 'http://' + baseUrl
+    baseURL: process.env.BASE_URL
   },
   /*
   ** Build configuration
@@ -99,8 +106,4 @@ export default {
   serverMiddleware: [
     { path: '/api', handler: '~/api/index.js' }
   ],
-
-  env: {
-    baseUrl
-  }
 }

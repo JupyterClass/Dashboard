@@ -45,7 +45,7 @@ export const unprotected = [
 
 export default {
 
-  '/join': async (req, res) => {
+  '/join': async (req, res, user) => {
     let { studentId, practiceId, sessionPwd } = await getJson(req);
 
     const notebook = getNotebook(practiceId);
@@ -55,6 +55,7 @@ export default {
       const { expiry, sessionPwd: pwd } = notebook;
       if (sessionPwd !== pwd) {
         console.log(`Rejecting join request from "${studentId}" -> provided password "${sessionPwd}" incorrect`);
+        res.statusCode = 401;
         res.end(unauthorizedError());
         return;
       }
@@ -79,6 +80,17 @@ export default {
     }
   },
 
+  '/rejoin': async (req, res, user) => {
+    // User here is guaranteed to be valid by the auth module
+    if (getStudent(user.id)) {
+      res.end(joinedSessionSuccess());
+    } else {
+      saveStudent(user.id);
+      res.end(joinedSessionSuccess());
+    }
+    console.log('Student rejoined session');
+  },
+
   '/sync-stores': async (req, res, user) => {
     // For the client to synchronise its store with the server's
     res.end(JSON.stringify({ NotebookStore, QuestionStore, StudentStore }));
@@ -91,19 +103,19 @@ export default {
     }
 
     try {
-      let { fileName, contents: notebook } = await getFileUploadContents(req, { ext: '.ipynb' });
+      let { contents: notebook } = await getFileUploadContents(req, { ext: '.ipynb' });
       notebook = {
-        id: fileName.replace('.ipynb', ''),
         data: JSON.parse(notebook)
       };
 
       try {
         verifyMetadata(notebook.data);
       } catch(err) {
-        console.log(`/upload: Rejecting notebook "${notebook.id}" - ${err}`);
+        console.log(`/upload: Rejecting notebook - ${err}`);
         res.end(error(err.toString()));
         return;
       }
+      notebook.id = notebook.data.metadata['JupyterClass']['practiceId'];
 
       const expiry = notebook.data.metadata['JupyterClass']['expiry'];
       if (expiry) {
@@ -134,6 +146,7 @@ export default {
   },
 
   '/evaluate': async (req, res, user) => {
+
     let payload;
     try {
       payload = await getJson(req);
@@ -143,10 +156,12 @@ export default {
     }
 
     if (isValidEvalPayload(payload)) {
-      let { studentId, practiceId, questionId, output } = payload;
+      let { practiceId, questionId, output } = payload;
+      const studentId = user.id;
       questionId = questionId.toString();
 
       if (!getStudent(studentId)) {
+        res.statusCode = 401;
         res.end(unauthorizedError());
         return;
       }
@@ -185,6 +200,11 @@ export default {
 
   '/questions': async (req, res, user) => {
     res.end(JSON.stringify(getAllQuestions()));
+  },
+
+  '/practice': async (req, res) => {
+    console.log(req.url);
+    res.end(JSON.stringify({ status: 'live' }));
   },
 
   '/': async (req, res, user) => {

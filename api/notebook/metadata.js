@@ -1,6 +1,5 @@
 const REQUIRED_FIELDS = [
   'practiceId',
-  'studentId',
   'server',
   'sessionPwd',
 ]

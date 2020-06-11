@@ -65,7 +65,7 @@ export default {
         saveStudent(studentId);
         const jwt = createJwt.student({
           id: studentId,
-          exp: expiry,
+          exp: Math.floor(expiry / 1000),
         }, SECRET);
         console.log(`Created jwt for student ${studentId}`, jwt);
         res.end(joinedSessionSuccess(jwt));

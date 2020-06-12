@@ -88,9 +88,11 @@ export default {
         this.$store.commit('syncStore', response.data);
         console.log('response.data => ', response.data);
         this.$store.commit('setSelectedNotebook', Object.values(this.notebooks)[0]);
-        this.$store.commit('setSelectedQuestions',
-          Object.values(this.questions[this.selectedNotebook.id]).map(qn => qn.id)
-        );
+        if (this.selectedNotebook) {
+          this.$store.commit('setSelectedQuestions',
+            Object.values(this.questions[this.selectedNotebook.id]).map(qn => qn.id)
+          );
+        }
       });
   },
 

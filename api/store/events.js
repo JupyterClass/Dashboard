@@ -1,5 +1,5 @@
-import { NotebookStore, QuestionStore } from "./question";
-import { StudentStore } from "./student";
+import { deleteNotebook, NotebookStore, QuestionStore } from "./question";
+import { deletePracticeProgress, StudentStore } from "./student";
 import { io } from "../websocket";
 
 // Push data to client
@@ -35,8 +35,15 @@ export const eventHandlers = {
   },
 
   'client-question-disable': () => {
+    console.log(data);
     const { practiceId, id } = data;
     QuestionStore[practiceId][id] = data;
     pushQuestionsState();
+  },
+
+  'client-delete-practice': practiceId => {
+    deleteNotebook(practiceId);
+    deletePracticeProgress(practiceId);
+    pushAllStateToClient();
   }
 };

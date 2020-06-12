@@ -8,7 +8,6 @@
  *   }
  * }
  */
-import { pushStudentsState } from "./sync";
 
 export const StudentStore = {};
 
@@ -22,7 +21,6 @@ export function saveStudent(studentId) {
       // }
     },
   };
-  pushStudentsState();
 }
 
 export function getStudent(id) {
@@ -66,8 +64,6 @@ export function setStudentProgress({
     // completedAt timestamp hasn't been set already
     studentQuestionState.completedAt = updatedAt
   }
-
-  pushStudentsState();
 }
 
 export function deletePracticeProgress(practiceId) {

@@ -34,10 +34,11 @@ export default {
     },
     notebookQuestions() {
       const qns = [];
+      const questions = this.questions;
       const selectedQns = this.selectedQuestions;
       const selectedNb = this.selectedNotebook;
-      if (selectedNb) {
-        for (const qn of Object.values(this.questions[selectedNb.id])) {
+      if (selectedNb && questions && questions[selectedNb.id]) {
+        for (const qn of Object.values(questions[selectedNb.id])) {
           qns.push({...qn, isSelected: selectedQns.includes(qn.id) });
         }
       }

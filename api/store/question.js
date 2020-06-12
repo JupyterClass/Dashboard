@@ -1,6 +1,5 @@
 // This is the in-memory mock db that makes provisioning an actual db unnecessary.
 // An alternative is sqlite,
-import { pushAllStateToClient } from "./sync";
 
 export const NotebookStore = {};
 /**
@@ -42,7 +41,6 @@ export function saveNotebookQuestions(notebook) {
       }
     }
   }
-  pushAllStateToClient();
 }
 
 export function getNotebook(id) {
@@ -55,7 +53,6 @@ export function getAllNotebooks() {
 
 export function saveQuestion(practiceId, question) {
   QuestionStore[practiceId][question.id] = question;
-  pushAllStateToClient();
 }
 
 export function getQuestion(practiceId, questionId) {

@@ -1,6 +1,6 @@
 import http from 'http';
 import socketIO from 'socket.io';
-import { eventHandlers } from "../store/sync";
+import { eventHandlers } from "../store/events";
 
 // TODO: Is there a way to share the socket instance with other modules???
 export let io;

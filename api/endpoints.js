@@ -35,6 +35,7 @@ import {
 import { isValidEvalPayload } from "./evaluate/validation";
 import { verifyMetadata } from "./notebook/metadata";
 import { createJwt } from "./auth";
+import { pushAllStateToClient, pushStudentsState } from "./store/events";
 
 const SECRET = process.env.SECRET;
 console.log('🔐 JWT Secret:', SECRET);
@@ -64,6 +65,7 @@ export default {
       if (!getStudent(studentId)) {
 
         saveStudent(studentId);
+        pushStudentsState();
         const jwt = createJwt.student({
           id: studentId,
           exp: Math.floor(expiry / 1000),
@@ -87,9 +89,10 @@ export default {
       res.end(joinedSessionSuccess());
     } else {
       saveStudent(user.id);
+      pushStudentsState();
       res.end(joinedSessionSuccess());
     }
-    console.log('Student rejoined session');
+    console.log(`Student "${user.id}" rejoined class`);
   },
 
   '/sync-stores': async (req, res, user) => {
@@ -137,6 +140,7 @@ export default {
 
       saveNotebook(notebook);
       saveNotebookQuestions(notebook);
+      pushAllStateToClient();
 
     } catch (err) {
       console.error('/upload: Unexpected error - ' + err);
@@ -186,6 +190,7 @@ export default {
         completeness: evaluation.result === 'OK' ? 100 : 0,
         updatedAt: Date.now(),
       });
+      pushStudentsState();
 
       res.end(JSON.stringify({
         type: 'qn-eval',

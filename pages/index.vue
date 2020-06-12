@@ -19,13 +19,7 @@
     </div>
     <div class="content-primary">
       <div>
-        <div class="lesson-info">
-          <div>
-            <h1>{{ selectedNotebook ? selectedNotebook.id : '' }}</h1>
-            <div>Delte</div>
-          </div>
-          <clock class="clock"/>
-        </div>
+        <lesson-info/>
         <question-toggles/>
       </div>
       <statistics/>
@@ -53,7 +47,7 @@ import {
 } from 'ant-design-vue';
 import Sider from "../components/Sider";
 import Questions from "../components/Questions";
-import Clock from "../components/Clock";
+import LessonInfo from "../components/LessonInfo";
 import QuestionToggles from "../components/QuestionToggles";
 import Statistics from "../components/Statistics";
 import ClassroomLayout from "../components/ClassroomLayout";
@@ -63,7 +57,7 @@ export default {
   components: {
     Students,
     ClassroomLayout,
-    Clock,
+    LessonInfo,
     Statistics,
     ALayout,
     AButton,
@@ -152,20 +146,6 @@ export default {
   height: 100%;
   overflow: scroll;
   padding-top: 8px;
-}
-
-.lesson-info {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  padding: 8px;
-}
-
-.clock {
-  height: 100%;
-  margin-left: 16px;
-  /*background-color: red;*/
 }
 
 .content-secondary {

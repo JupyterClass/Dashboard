@@ -18,9 +18,15 @@
       <sider/>
     </div>
     <div class="content-primary">
-      <div class="lesson-info">
-        <h1>{{ selectedNotebook ? selectedNotebook.id : '' }}</h1>
-        <clock class="clock"/>
+      <div>
+        <div class="lesson-info">
+          <div>
+            <h1>{{ selectedNotebook ? selectedNotebook.id : '' }}</h1>
+            <div>Delte</div>
+          </div>
+          <clock class="clock"/>
+        </div>
+        <question-toggles/>
       </div>
       <statistics/>
     </div>
@@ -38,7 +44,6 @@
 </template>
 
 <script>
-import socket from '~/plugins/socket.io.js';
 import {
   Layout as ALayout,
   Row as ARow,
@@ -49,6 +54,7 @@ import {
 import Sider from "../components/Sider";
 import Questions from "../components/Questions";
 import Clock from "../components/Clock";
+import QuestionToggles from "../components/QuestionToggles";
 import Statistics from "../components/Statistics";
 import ClassroomLayout from "../components/ClassroomLayout";
 import Students from "../components/Students";
@@ -68,6 +74,7 @@ export default {
     ACol,
     Sider,
     Questions,
+    QuestionToggles
   },
 
   data() {

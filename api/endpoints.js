@@ -1,3 +1,4 @@
+import url from "url";
 import evaluate from "./evaluate";
 import { getJson } from "./utils/json";
 import { getFileUploadContents } from "./utils/fileUploads";
@@ -202,9 +203,13 @@ export default {
     res.end(JSON.stringify(getAllQuestions()));
   },
 
-  '/practice': async (req, res) => {
-    console.log(req.url);
-    res.end(JSON.stringify({ status: 'live' }));
+  '/practice/status': async (req, res) => {
+    const { id } = url.parse(req.url, true).query;
+    if (id && getNotebook(id)) {
+      res.end(JSON.stringify({ status: 'live' }));
+      return;
+    }
+    res.end(JSON.stringify({ status: 'down' }));
   },
 
   '/': async (req, res, user) => {

@@ -17,7 +17,12 @@
     <div v-else class="sider">
       <sider/>
     </div>
-    <div class="content-primary">
+    <div v-if="hasNoNotebooks" class="content-primary">
+      <div class="setup-instructions-wrapper">
+        <setup-instructions/>
+      </div>
+    </div>
+    <div v-else class="content-primary">
       <div>
         <lesson-info/>
         <question-toggles/>
@@ -52,9 +57,11 @@ import QuestionToggles from "../components/QuestionToggles";
 import Statistics from "../components/Statistics";
 import ClassroomLayout from "../components/ClassroomLayout";
 import Students from "../components/Students";
+import SetupInstructions from "../components/SetupInstructions";
 
 export default {
   components: {
+    SetupInstructions,
     Students,
     ClassroomLayout,
     LessonInfo,
@@ -107,6 +114,9 @@ export default {
   },
 
   computed: {
+    hasNoNotebooks() {
+      return Object.keys(this.notebooks).length === 0;
+    },
     notebooks() {
       return this.$store.state.NotebookStore;
     },
@@ -148,6 +158,13 @@ export default {
   height: 100%;
   overflow: scroll;
   padding-top: 8px;
+}
+
+.setup-instructions-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 .content-secondary {

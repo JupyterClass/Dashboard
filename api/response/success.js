@@ -14,3 +14,10 @@ export function uploadNotebookSuccess() {
     msg: 'Notebook uploaded'
   });
 }
+
+export function deletedNotebookSuccess() {
+  return JSON.stringify({
+    status,
+    msg: 'Notebook deleted'
+  });
+}

@@ -12,25 +12,15 @@ import {
   getNotebook,
   deleteNotebook,
 } from "./store/question";
-import {
-  error,
-  duplicateStudentIdError,
-  invalidEndpoint,
-  invalidPayloadError,
-  nonexistentPracticeError,
-  nonexistentQuestionError,
-  unauthorizedError
-} from "./response/error";
-import {
-  joinedSessionSuccess,
-  uploadNotebookSuccess
-} from "./response/success";
+import * as Errors from "./response/error";
+import * as Success from "./response/success";
 import {
   getStudent,
   saveStudent,
   setStudentProgress,
   StudentStore,
   deletePracticeProgress,
+  deleteAllStudents,
 } from "./store/student";
 import { isValidEvalPayload } from "./evaluate/validation";
 import { verifyMetadata } from "./notebook/metadata";
@@ -43,6 +33,7 @@ console.log('🔐 JWT Secret:', SECRET);
 export const unprotected = [
   // Not protected by auth module
   '/join', // -> students will get jwt from here
+  '/practice/status',
 ]
 
 export default {
@@ -58,7 +49,7 @@ export default {
       if (sessionPwd !== pwd) {
         console.log(`Rejecting join request from "${studentId}" -> provided password "${sessionPwd}" incorrect`);
         res.statusCode = 401;
-        res.end(unauthorizedError());
+        res.end(Errors.unauthorizedError());
         return;
       }
 
@@ -71,38 +62,50 @@ export default {
           exp: Math.floor(expiry / 1000),
         }, SECRET);
         console.log(`Created jwt for student ${studentId}`, jwt);
-        res.end(joinedSessionSuccess(jwt));
+        res.end(Success.joinedSessionSuccess(jwt));
 
       } else {
         console.log(`Rejecting studentId: "${studentId}" -> already in use.`);
-        res.end(duplicateStudentIdError());
+        res.end(Errors.duplicateStudentIdError());
       }
     } else {
       console.log(`Student "${studentId}" tried to join non-existent Practice "${practiceId}"`);
-      res.end(nonexistentPracticeError());
+      res.end(Errors.nonexistentPracticeError());
     }
   },
 
   '/rejoin': async (req, res, user) => {
     // User here is guaranteed to be valid by the auth module
     if (getStudent(user.id)) {
-      res.end(joinedSessionSuccess());
+      res.end(Success.joinedSessionSuccess());
     } else {
       saveStudent(user.id);
       pushStudentsState();
-      res.end(joinedSessionSuccess());
+      res.end(Success.joinedSessionSuccess());
     }
     console.log(`Student "${user.id}" rejoined class`);
   },
 
   '/sync-stores': async (req, res, user) => {
-    // For the client to synchronise its store with the server's
-    res.end(JSON.stringify({ NotebookStore, QuestionStore, StudentStore }));
+    if (user.role !== 'tm') {
+      res.end(Errors.unauthorizedError());
+    } else {
+      // For the client to synchronise its store with the server's
+      res.end(JSON.stringify({ NotebookStore, QuestionStore, StudentStore }));
+    }
   },
 
   '/upload': async (req, res, user) => {
+
+    console.log('/upload starting');
+
+    if (user.role !== 'tm') {
+      res.end(Errors.unauthorizedError());
+      return;
+    }
+
     if (req.method.toLowerCase() !== 'post') {
-      res.end(invalidEndpoint());
+      res.end(Errors.invalidEndpoint());
       return;
     }
 
@@ -144,10 +147,10 @@ export default {
 
     } catch (err) {
       console.error('/upload: Unexpected error - ' + err);
-      res.end(error(err.toString()))
+      res.end(Errors.error(err.toString()))
       return;
     }
-    res.end(uploadNotebookSuccess());
+    res.end(Success.uploadNotebookSuccess());
   },
 
   '/evaluate': async (req, res, user) => {
@@ -156,7 +159,7 @@ export default {
     try {
       payload = await getJson(req);
     } catch (err) {
-      res.end(invalidPayloadError());
+      res.end(Errors.invalidPayloadError());
       return;
     }
 
@@ -167,14 +170,14 @@ export default {
 
       if (!getStudent(studentId)) {
         res.statusCode = 401;
-        res.end(unauthorizedError());
+        res.end(Errors.unauthorizedError());
         return;
       }
 
       const question = getQuestion(practiceId, questionId);
 
       if (!question) {
-        res.end(nonexistentQuestionError());
+        res.end(Errors.nonexistentQuestionError());
         return;
       }
 
@@ -200,7 +203,7 @@ export default {
         },
       }));
     } else {
-      res.end(invalidPayloadError());
+      res.end(Errors.invalidPayloadError());
     }
   },
 
@@ -215,6 +218,41 @@ export default {
       return;
     }
     res.end(JSON.stringify({ status: 'down' }));
+  },
+
+  '/practice': async (req, res, user) => {
+    if (user.role !== 'tm') {
+      res.end(Errors.unauthorizedError());
+      return;
+    }
+
+    const { id } = url.parse(req.url, true).query;
+    const method = req.method.toLowerCase();
+    if (method === 'delete') {
+      deleteNotebook(id);
+      deletePracticeProgress(id);
+      pushAllStateToClient();
+      res.end(Success.deletedNotebookSuccess());
+    } else {
+      // GET, POST, UPDATE not needed as yet.. :3
+      res.end(Errors.invalidEndpoint());
+    }
+  },
+
+  '/students': async (req, res, user) => {
+    if (user.role !== 'tm') {
+      res.end(Errors.unauthorizedError());
+      return;
+    }
+    const method = req.method.toLowerCase();
+    if (method === 'delete') {
+      deleteAllStudents();
+      pushStudentsState();
+      res.end(JSON.stringify({ status: 'success' }));
+    } else {
+      // GET, POST, UPDATE not needed as yet.. :3
+      res.end(Errors.invalidEndpoint());
+    }
   },
 
   '/': async (req, res, user) => {

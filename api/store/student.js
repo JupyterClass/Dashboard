@@ -71,3 +71,13 @@ export function deletePracticeProgress(practiceId) {
     delete StudentStore[studentId].progress[practiceId];
   }
 }
+
+export function deleteStudent(studentId) {
+  delete StudentStore[studentId];
+}
+
+export function deleteAllStudents() {
+  for (const studentId in StudentStore) {
+    delete StudentStore[studentId];
+  }
+}

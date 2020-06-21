@@ -134,8 +134,9 @@ export default {
 .main {
   display: flex;
   height: 100vh;
+  min-height: 100vh;
   width: 100vw;
-  overflow: scroll;
+  overflow: hidden;
 }
 
 .affix {
@@ -164,7 +165,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 100vh;
 }
 
 .content-secondary {
@@ -188,6 +189,12 @@ export default {
 @media (max-width: 1023px) {
   .main {
     flex-direction: column;
+    height: auto;
+    width: 100vw;
+    overflow: hidden;
+  }
+
+  .content-primary {
     height: auto;
   }
 }

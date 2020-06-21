@@ -11,6 +11,7 @@ import {
   getQuestion,
   getNotebook,
   deleteNotebook,
+  setQuestionStatusIsLive,
 } from "./store/question";
 import * as Errors from "./response/error";
 import * as Success from "./response/success";
@@ -25,7 +26,7 @@ import {
 import { isValidEvalPayload } from "./evaluate/validation";
 import { verifyMetadata } from "./notebook/metadata";
 import { createJwt } from "./auth";
-import { pushAllStateToClient, pushStudentsState } from "./store/events";
+import { pushAllStateToClient, pushQuestionsState, pushStudentsState } from "./store/events";
 
 const SECRET = process.env.SECRET;
 console.log('🔐 JWT Secret:', SECRET);
@@ -209,6 +210,23 @@ export default {
 
   '/questions': async (req, res, user) => {
     res.end(JSON.stringify(getAllQuestions()));
+  },
+
+  '/question/start': async (req, res, user) => {
+    if (user.role !== 'tm') {
+      res.end(Errors.unauthorizedError());
+      return;
+    }
+
+    const { practiceId, questionId, isLive } = url.parse(req.url, true).query;
+    const question = getQuestion(practiceId, questionId);
+    if (!question) {
+      res.end(Errors.nonexistentQuestionError());
+      return;
+    }
+    setQuestionStatusIsLive(practiceId, questionId, isLive === 'true', Date.now());
+    pushQuestionsState();
+    res.end(JSON.stringify({ status: 'success' }));
   },
 
   '/practice/status': async (req, res) => {

@@ -97,9 +97,11 @@ export default {
   methods: {
 
     startTimer() {
-      this.timerIntervalFn = setInterval(() => {
-        this.elapsed = Math.round((Date.now() - this.question.startTime) / 1000);
-      }, 1000);
+      if (!this.timerIntervalFn) {
+        this.timerIntervalFn = setInterval(() => {
+          this.elapsed = Math.round((Date.now() - this.question.startTime) / 1000);
+        }, 1000);
+      }
     },
     stopTimer() {
       clearInterval(this.timerIntervalFn);
@@ -186,6 +188,15 @@ export default {
         secs = '0' + secs;
       }
       return mins + ':' + secs;
+    }
+  },
+  watch: {
+    question: {
+      handler(object) {
+        this.startTimer();
+        this.elapsed = Math.round((Date.now() - object.startTime) / 1000);
+      },
+      deep: true
     }
   }
 };

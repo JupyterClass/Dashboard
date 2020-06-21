@@ -69,3 +69,9 @@ export function getAllQuestions() {
   }
   return questions;
 }
+
+export function setQuestionStatusIsLive(practiceId, questionId, isLive, timestamp) {
+  const question = QuestionStore[practiceId][questionId];
+  question['isLive'] = isLive;
+  question['startTime'] = timestamp;
+}

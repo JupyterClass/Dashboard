@@ -4,9 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const FormData = require('form-data');
 
-const SERVER_URL = 'http://localhost:3000';
-const SERVER_SECRET = 'jupyter123!';
-
 let PRACTICE_ID = null; // For shutdown hook to tear down in case of early termination
 
 const vlogger = {
@@ -49,12 +46,12 @@ const {
   .option('qnTimeNeeded', {
     type: 'array',
     description: '[min, max]: the minimum and maximum time in seconds for a student to finish a question',
-    default: [5, 10],
+    default: [10, 60],
   })
   .option('joinTimeNeeded', {
     type: 'array',
     description: '[min, max]: the minimum and maximum time in seconds for a student to join the session',
-    default: [2, 5],
+    default: [3, 10],
   })
   .option('verbose', {
     alias: 'v',
@@ -86,7 +83,8 @@ async function main() {
   const { practiceId, sessionPwd } = metadata;
   PRACTICE_ID = practiceId;
 
-  questions = questions.map(({ id, expected }) => new Question(id, expected));
+  questions = questions.map(({ id, expected }) => new Question(id, practiceId, expected));
+  await startQuestions(questions);
 
   const Students = []
   for (let i = 1; i <= testConfigs.numStudents; i++) {
@@ -130,7 +128,7 @@ async function main() {
 }
 
 async function setup() {
-  token = await getToken(SERVER_SECRET);
+  token = await getToken(testConfigs.serverSecret);
   const uploadResult = await uploadNotebookToServer(testConfigs.notebookPath, token);
 
   if (uploadResult.status !== 'success') {
@@ -146,8 +144,23 @@ async function teardown(practiceId) {
   await deleteStudents();
 }
 
+async function startQuestions(questions) {
+  for (const question of questions) {
+    const { practiceId, id } = question;
+    const result = await apiGet(
+      `/api/question/start?practiceId=${practiceId}&questionId=${id}&isLive=true`,
+      { authorization: 'bearer ' + token }
+    );
+    vlogger.log('Qn activate result: ' + JSON.stringify(result));
+    if (result.status === 'error') {
+      throw Error(result.msg);
+    }
+  }
+  vlogger.log('Activated questions: [' + questions.map(qn => qn.id) + ']');
+}
+
 function getToken(password) {
-  return apiPost(SERVER_URL + '/api/auth/login',
+  return apiPost('/api/auth/login',
     {
       password
     })
@@ -158,7 +171,7 @@ function uploadNotebookToServer(notebookPath, token) {
   vlogger.log('Uploading to')
   const formData = new FormData();
   formData.append('file', fs.createReadStream(notebookPath));
-  return fetch(SERVER_URL + '/api/upload',
+  return fetch(testConfigs.serverUrl + '/api/upload',
     {
       method: 'POST',
       headers: {
@@ -194,8 +207,9 @@ function getMetadata(notebook) {
 }
 
 class Question {
-  constructor(id, expectedOutput) {
+  constructor(id, practiceId, expectedOutput) {
     this.id = id;
+    this.practiceId = practiceId;
     this.expectedOutput = expectedOutput;
   }
 }
@@ -218,9 +232,10 @@ class Student {
     // Students don't join ALL at the same time
     return new Promise((resolve, reject) => {
       const [lower, upper] = testConfigs.joinTimeNeeded;
-      const joinSessionDelay = randBetween(lower, upper) * 1000;
+      const joinSessionDelay = Math.floor(randBetween(lower, upper) * 1000);
+      vlogger.log(`Student ${this.id} joining session in ${joinSessionDelay}s`);
       setTimeout(() => {
-        apiPost(SERVER_URL + '/api/join', {
+        apiPost('/api/join', {
           studentId: this.id,
           practiceId: this.practiceId,
           sessionPwd: this.sessionPwd,
@@ -263,7 +278,7 @@ class Student {
   }
 
   sendOutputToServer(questionId, output) {
-    return apiPost(SERVER_URL + '/api/evaluate', {
+    return apiPost('/api/evaluate', {
       practiceId: this.practiceId,
       questionId,
       output
@@ -285,8 +300,12 @@ async function deleteStudents() {
   await apiDelete('/api/students');
 }
 
-function apiPost(url, payload = {}, headers = {}) {
-  return fetch(url, {
+function apiGet(endpoint, headers) {
+  return fetch(testConfigs.serverUrl + endpoint, { headers }).then(response => response.json());
+}
+
+function apiPost(endpoint, payload = {}, headers = {}) {
+  return fetch(testConfigs.serverUrl + endpoint, {
     method: "POST",
     headers: {
       'content-type': 'application/json',
@@ -299,7 +318,7 @@ function apiPost(url, payload = {}, headers = {}) {
 }
 
 function apiDelete(endpoint) {
-  return fetch(SERVER_URL + endpoint,
+  return fetch(testConfigs.serverUrl + endpoint,
     {
       method: 'DELETE',
       headers: {

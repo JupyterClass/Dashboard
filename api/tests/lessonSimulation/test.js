@@ -21,6 +21,7 @@ const {
   numStudents,
   qnTimeNeeded,
   joinTimeNeeded,
+  performTeardown,
   verbose
 } = yargs
   .option('serverUrl', {
@@ -53,6 +54,11 @@ const {
     description: '[min, max]: the minimum and maximum time in seconds for a student to join the session',
     default: [3, 10],
   })
+  .option('performTeardown', {
+    type: 'boolean',
+    description: 'Perform teardown? (Delete all notebook, question and student data on the server)',
+    default: false,
+  })
   .option('verbose', {
     alias: 'v',
     type: 'boolean',
@@ -69,6 +75,7 @@ const testConfigs = {
   numStudents,
   qnTimeNeeded,
   joinTimeNeeded,
+  performTeardown,
   verbose
 }
 
@@ -122,7 +129,9 @@ async function main() {
     );
   }
   await Promise.all(promises);
-  await teardown(practiceId);
+  if (testConfigs.performTeardown) {
+    await teardown(practiceId);
+  }
   console.log('TEST COMPLETED');
   console.table(studentTimeTakenMap);
 }

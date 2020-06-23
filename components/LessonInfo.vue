@@ -16,7 +16,6 @@
 </template>
 
 <script>
-import socket from '~/plugins/socket.io.js';
 import {
   Button as AButton,
   Popconfirm as APopconfirm,
@@ -27,7 +26,8 @@ export default {
   components: { AButton, APopconfirm, Clock },
   methods: {
     handleDeleteClick() {
-      socket.emit('client-delete-practice', this.$store.state.selectedNotebook.id);
+      console.log(this.$socket);
+      this.$socket.emit('client-delete-practice', this.$store.state.selectedNotebook.id);
     }
   },
   computed: {
@@ -50,6 +50,5 @@ export default {
 .clock {
   height: 100%;
   margin-left: 16px;
-  /*background-color: red;*/
 }
 </style>

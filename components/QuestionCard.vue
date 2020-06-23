@@ -67,7 +67,6 @@
 </template>
 
 <script>
-import socket from '~/plugins/socket.io.js';
 import Status from "./indicators/Status";
 import IconButton from "./buttons/IconButton";
 import {
@@ -115,7 +114,7 @@ export default {
       //     startTime: Date.now(),
       //   }
       // );
-      socket.emit('client-question-enable', {
+      this.$socket.emit('client-question-enable', {
         ...this.question,
         isLive: true,
         startTime: Date.now()
@@ -132,7 +131,7 @@ export default {
       //     endTime: Date.now(),
       //   }
       // );
-      socket.emit('client-question-enable', {
+      this.$socket.emit('client-question-enable', {
         ...this.question,
         isLive: false,
         endTime: Date.now()

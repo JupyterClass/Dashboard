@@ -1,6 +1,3 @@
-import websocketSyncPlugin from "./websocketSyncPlugin";
-export const plugins = [ websocketSyncPlugin ];
-
 export const state = () => ({
   NotebookStore: {},
   QuestionStore: {},

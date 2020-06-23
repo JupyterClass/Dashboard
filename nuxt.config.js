@@ -42,7 +42,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '~/plugins/axios'
+    '~/plugins/axios',
   ],
   /*
   ** Nuxt.js dev-modules
@@ -101,7 +101,10 @@ export default {
         tokenType: 'bearer',
         globalToken: true,
       }
-    }
+    },
+    plugins: [
+      '~/plugins/socket.io',
+    ]
   },
 
   serverMiddleware: [

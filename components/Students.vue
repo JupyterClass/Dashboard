@@ -3,7 +3,7 @@
     <div class="header">
       <h1>Students</h1>
       <div>
-        <a-search placeholder="Search student" />
+        <a-search v-model="searchStudent" placeholder="Search student" />
       </div>
 <!--      <a-button type="danger" shape="round" @click="handleKickAll">-->
 <!--        Kick All-->
@@ -11,12 +11,14 @@
     </div>
     <div class="students-in-progress">
       <student-card v-for="(student, i) in students.studentsInProgress"
+                    v-show="shouldShowStudent(student)"
                     :key="student.id"
                     :student="student"
                     :attempted-questions="getStudentAttemptedQuestions(student)"/>
     </div>
     <div class="students-done">
       <student-card v-for="(student, i) in students.studentsCompleted"
+                    v-show="shouldShowStudent(student)"
                     :key="student.id"
                     :student="student"
                     :attempted-questions="getStudentAttemptedQuestions(student)"/>
@@ -32,6 +34,7 @@ import {
   Button as AButton,
 } from "ant-design-vue";
 import StudentCard from "./StudentCard";
+
 export default {
   name: "Students",
   components: {
@@ -43,16 +46,22 @@ export default {
     StudentCard,
   },
 
+  data() {
+    return {
+      searchStudent: null,
+    }
+  },
+
   computed: {
     students() {
       const students = Object.values(this.$store.state.StudentStore);
-
       const studentsCompleted = [];
       const studentsInProgress = [];
-
       const selectedNotebook = this.$store.state.selectedNotebook;
+
       for (const student of students) {
         let isStudentDone = true;
+
         for (const qnId of this.$store.state.selectedQuestions) {
           const practice = student.progress[selectedNotebook.id];
           if (!practice) {
@@ -65,12 +74,14 @@ export default {
             break;
           }
         }
+
         if (isStudentDone) {
           studentsCompleted.push(student);
         } else {
           studentsInProgress.push(student);
         }
       }
+
       return { studentsInProgress, studentsCompleted };
     },
 
@@ -90,6 +101,17 @@ export default {
   },
 
   methods: {
+
+    shouldShowStudent(student) {
+      let includeStudent = true;
+      if (this.searchStudent) {
+        if (!student.id.toLowerCase().includes(this.searchStudent.toLowerCase())) {
+          includeStudent = false;
+        }
+      }
+      return includeStudent;
+    },
+
     getStudentAttemptedQuestions(student) {
       let attemptedQuestions = {};
       for (const qnId of this.$store.state.selectedQuestions) {
@@ -151,6 +173,7 @@ export default {
 }
 .students-done {
   display: flex;
+  flex-direction: column;
   justify-content: flex-start;
   flex-wrap: wrap;
   padding: 12px;

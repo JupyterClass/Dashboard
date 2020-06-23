@@ -8,7 +8,7 @@
         {{ lastAttemptMinsAgo }}
       </div>
     </div>
-    <div v-if="visible" class="progress">
+    <div v-show="visible" class="progress">
       <div v-for="(attemptedQuestion, i) of attemptedQuestions"
            :key="student.id + '-AQ-' + i">
         <div class="progress-indicator">

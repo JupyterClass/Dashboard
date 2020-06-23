@@ -9,7 +9,7 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "test": "node api/tests/lessonSimulation/test.js --serverUrl \"http://localhost:3000\" --numStudents 50 --qnTimeNeeded=1 5"
+    "test": "node api/tests/lessonSimulation/test.js --serverUrl \"http://localhost:3000\" --numStudents 50 --qnTimeNeeded=10 30"
   },
   "dependencies": {
     "@nuxtjs/auth": "^4.9.1",
